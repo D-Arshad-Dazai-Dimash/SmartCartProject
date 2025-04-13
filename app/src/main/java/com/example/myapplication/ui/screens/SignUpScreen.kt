@@ -3,8 +3,11 @@ package com.example.myapplication.ui.screens
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -19,6 +22,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -30,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -59,6 +66,8 @@ fun SignUpScreen() {
     var passwordError by remember { mutableStateOf("") }
     var confirmPasswordError by remember { mutableStateOf("") }
 
+    var isChecked by remember { mutableStateOf(false) }
+
     fun validate() {
         // Password strength calculation
         passwordStrength = when {
@@ -75,7 +84,8 @@ fun SignUpScreen() {
             else -> "At least 8 characters"
         }
 
-        passwordError = if (password.matches(regex = Regex("^(?=.*[A-Z].*[A-Z])(?=.*[!@#\$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}\$"))) "At least 8 characters" else ""
+        passwordError =
+            if (password.matches(regex = Regex("^(?=.*[A-Z].*[A-Z])(?=.*[!@#\$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}\$"))) "At least 8 characters" else ""
         confirmPasswordError = if (confirmPassword != password) "Passwords do not match" else ""
     }
 
@@ -140,7 +150,7 @@ fun SignUpScreen() {
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.padding(bottom = 38.dp))
+                    Spacer(modifier = Modifier.padding(bottom = 30.dp))
 
                     CustomTextField(
                         value = name,
@@ -149,7 +159,7 @@ fun SignUpScreen() {
                         placeholder = "Enter full name"
                     )
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
 
                     CustomTextField(
                         value = email,
@@ -159,7 +169,7 @@ fun SignUpScreen() {
                         keyboardType = KeyboardType.Email
                     )
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
 
                     CustomTextField(
                         value = password,
@@ -175,7 +185,8 @@ fun SignUpScreen() {
                         error = passwordError
                     )
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
+
                     CustomTextField(
                         value = confirmPassword,
                         onValueChange = {
@@ -190,10 +201,143 @@ fun SignUpScreen() {
                         error = confirmPasswordError
                     )
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
 
-                    PasswordStrengthIndicator(strength = passwordStrength, strengthText = passwordStrengthText)
+                    PasswordStrengthIndicator(
+                        strength = passwordStrength,
+                        strengthText = passwordStrengthText
+                    )
 
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Start,
+                        modifier = Modifier.fillMaxWidth()
+
+                    ) {
+                        Checkbox(
+                            checked = isChecked,
+                            onCheckedChange = { isChecked = it },
+                            colors = CheckboxColors(
+                                checkedBorderColor = Color(0xFFD1CFCF),
+                                disabledBorderColor = Color(0xFFD1CFCF),
+                                checkedBoxColor = Color.White,
+                                checkedCheckmarkColor = Color.Black,
+                                uncheckedBoxColor = Color.White,
+                                uncheckedCheckmarkColor = Color.Black,
+                                uncheckedBorderColor = Color(0xFFD1CFCF),
+                                disabledCheckedBoxColor = Color.White,
+                                disabledUncheckedBoxColor = Color.White,
+                                disabledUncheckedBorderColor = Color(0xFFD1CFCF),
+                                disabledIndeterminateBorderColor = Color(0xFFD1CFCF),
+                                disabledIndeterminateBoxColor = Color(0xFFD1CFCF)
+                            )
+                        )
+                        Text(
+                            text = "I agree with ",
+                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                        )
+                        Text(
+                            text = "Terms",
+                            color = Color.Blue,
+                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                            modifier = Modifier.clickable { /* Add link action here */ }
+                        )
+                        Text(
+                            text = " and ",
+                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                        )
+                        Text(
+                            text = "Privacy",
+                            color = Color.Blue,
+                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                            modifier = Modifier.clickable { /* Add link action here */ }
+                        )
+                    }
+//                    Button(
+//                        onClick = { },
+//                        modifier = Modifier.size(354.dp, 52.dp),
+//                        border = BorderStroke(1.dp, Color(0xFFD1CFCF)),
+//                        colors = ButtonColors(
+//                            containerColor = Color.White,
+//                            contentColor = Color.Black,
+//                            disabledContentColor = Color.Black,
+//                            disabledContainerColor = Color.White
+//                        ),
+//                        shape = RoundedCornerShape(18.dp)
+//                    ){
+//                        Text(
+//                            "Sign up",
+//                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+//                            modifier = Modifier.padding(8.dp)
+//                        )
+//                    }
+
+
+//                    Button(
+//                        onClick = {
+//                            // Sign up logic
+//                            if (passwordError.isEmpty() && confirmPasswordError.isEmpty()) {
+//                                // Navigate to next screen (home)
+////                                navController.navigate("home")
+//                            }
+//                        },
+//                        enabled = isChecked, // Disable the button if checkbox is not checked
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(48.dp), // Optional: Adjust the height if needed
+//                        colors = ButtonDefaults.buttonColors(
+//                            containerColor = Brush.horizontalGradient(
+//                                colors = listOf(
+//                                    Color(0xFFFCDCCD),
+//                                    Color(0xFFCE5F27)
+//                                )
+//                            ) // Make the background transparent to apply the gradient
+//                        ),
+//                    ) {
+//                        Text(
+//                            text = "Sign Up",
+//                            color = Color.White, // Text color
+//                            modifier = Modifier.align(Alignment.Center)
+//                        )
+//
+//                    }
+
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp) // Set the height of the container
+                            .background(
+                                brush = Brush.horizontalGradient(
+                                    colors = listOf(
+                                        Color(0xFFFCDCCD),
+                                        Color(0xFFCE5F27)
+                                    )
+                                ),
+                                shape = RoundedCornerShape(23.dp)
+                            )
+                    ) {
+                        Button(
+                            onClick = {
+                                if (passwordError.isEmpty() && confirmPasswordError.isEmpty()) {
+//                                    navController.navigate("home")
+                                }
+                            },
+                            enabled = isChecked,
+                            modifier = Modifier
+                                .fillMaxSize(),
+//                            colors = ButtonDefaults.buttonColors(
+//                                containerColor = Color.Transparent
+//                            ),
+                        ) {
+                            Text(
+                                text = "Sign Up",
+                                color = Color.White,
+                                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+                            )
+                        }
+                    }
 
 
                 }
@@ -208,11 +352,12 @@ fun PasswordStrengthIndicator(strength: Float, strengthText: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth(0.95f)
-            .padding(top = 4.dp)
     ) {
         LinearProgressIndicator(
             progress = strength,
-            modifier = Modifier.fillMaxWidth().background(color = Color.LightGray),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = Color.LightGray),
             color = when {
                 strength <= 0.33f -> Color.Red
                 strength in 0.34f..0.66f -> Color.Yellow

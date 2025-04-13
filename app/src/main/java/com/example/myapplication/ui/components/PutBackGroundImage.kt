@@ -6,10 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import com.example.myapplication.R
 
 @Composable
-fun PutBackGroundImage(id : Int) {
+fun PutBackGroundImage(id: Int) {
     Image(
         painter = painterResource(id = id),
         contentDescription = "Background Image",

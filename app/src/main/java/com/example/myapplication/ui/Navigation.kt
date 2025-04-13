@@ -14,8 +14,8 @@ fun SetupNavGraph(navController: NavHostController) {
 
     NavHost(navController = navController, startDestination = "welcome") {
         composable("welcome") {
-            WelcomeScreen(navController)
-//            WelcomeScreen()
+//            WelcomeScreen(navController)
+            WelcomeScreen()
         }
 //        composable("login") { LoginScreen(navController) }
         composable("home") { HomeScreen(navController) }

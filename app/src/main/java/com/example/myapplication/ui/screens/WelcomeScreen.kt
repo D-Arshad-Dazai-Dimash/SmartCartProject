@@ -42,12 +42,14 @@ import com.example.myapplication.R
 import kotlinx.coroutines.delay
 
 
-//@Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
-fun WelcomeScreen(navController:NavController) {
+//fun WelcomeScreen(navController:NavController) {
+fun WelcomeScreen(){
     LaunchedEffect(Unit) {
         delay(2000)
-        navController.navigate("login")    }
+//        navController.navigate("login")
+        }
     Box(
         modifier = Modifier
             .background(Color.Gray)

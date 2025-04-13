@@ -43,13 +43,13 @@ import com.example.myapplication.ui.components.PutBackGroundImage
 import kotlinx.coroutines.delay
 
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
-//fun WelcomeScreen(navController:NavController) {
-fun WelcomeScreen(){
+fun WelcomeScreen(navController:NavController) {
+//fun WelcomeScreen(){
     LaunchedEffect(Unit) {
         delay(2000)
-//        navController.navigate("login")
+        navController.navigate("signup")
         }
     Box(
         modifier = Modifier

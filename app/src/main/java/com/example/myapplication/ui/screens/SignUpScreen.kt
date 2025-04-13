@@ -47,12 +47,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.PutBackGroundImage
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(navController: NavController) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -257,7 +258,7 @@ fun SignUpScreen() {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(48.dp) // Set the height of the container
+                            .height(48.dp)
                             .background(
                                 brush = Brush.horizontalGradient(
                                     colors = listOf(
@@ -271,7 +272,7 @@ fun SignUpScreen() {
                         Button(
                             onClick = {
                                 if (passwordError.isEmpty() && confirmPasswordError.isEmpty()) {
-//                                    navController.navigate("home")
+                                    navController.navigate("home")
                                 }
                             },
                             enabled = isChecked,
@@ -293,15 +294,16 @@ fun SignUpScreen() {
 
                     Button(
                         onClick = {
-//                                    navController.navigate("home")
+                            navController.navigate("home")
                         },
                         modifier = Modifier
-                            .fillMaxSize().padding(top = 15.dp, bottom = 8.dp),
+                            .fillMaxSize()
+                            .padding(top = 15.dp, bottom = 8.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.White
                         ),
                         shape = RoundedCornerShape(23.dp),
-                        border = BorderStroke(1.dp , Color(0xFFF08F5F))
+                        border = BorderStroke(1.dp, Color(0xFFF08F5F))
                     ) {
                         Text(
                             text = "Log in",
@@ -370,14 +372,7 @@ fun CustomTextField(
             visualTransformation = visualTransformation,
             isError = isError,
             modifier = Modifier
-                .fillMaxWidth(),
-//            colors = TextFieldDefaults.textFieldColors(
-//                focusedIndicatorColor = Color.White,
-//                unfocusedIndicatorColor = Color.White,
-//                containerColor = Color.White,
-//                focusedLabelColor = Color(0xFFF08F5F),
-//                unfocusedLabelColor = Color(0xFFF08F5F)
-//            )
+                .fillMaxWidth()
         )
 
         if (isError && error != null) {

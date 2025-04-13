@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.R
+import com.example.myapplication.ui.components.PutBackGroundImage
 import kotlinx.coroutines.delay
 
 
@@ -56,12 +57,6 @@ fun WelcomeScreen(){
             .systemBarsPadding()
             .consumeWindowInsets(WindowInsets.systemBars)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.welcome),
-            contentDescription = "Background Image",
-            modifier = Modifier
-                .fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        PutBackGroundImage(R.drawable.welcome)
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
+import com.example.myapplication.ui.components.PutBackGroundImage
 
 @Preview(showBackground = true)
 @Composable
@@ -44,23 +46,23 @@ fun SignUpScreen() {
                 .systemBarsPadding()
                 .consumeWindowInsets(WindowInsets.systemBars)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.signup),
-                contentDescription = "Background Image",
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
+            PutBackGroundImage(R.drawable.signup)
         }
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 30.dp)){
-            Column(modifier = Modifier.padding(top = 95.dp).fillMaxWidth()) {
+            Column(modifier = Modifier.
+            padding(top = 95.dp).
+            fillMaxWidth()) {
                 Text("Sign Up" , style = TextStyle(fontSize = 42.sp), fontWeight = FontWeight.W700 , color = Color(0xFF363636))
                 Text("Please enter your details" , style = TextStyle(fontSize = 16.sp) , fontWeight = FontWeight.SemiBold )
             }
-            Column(modifier = Modifier.fillMaxSize()) {  }
+            Column(modifier = Modifier.
+            fillMaxSize().
+            padding(bottom = 50.dp)) {
 
+            }
         }
+
     }
 }

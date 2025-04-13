@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.LinearProgressIndicator
@@ -284,14 +285,32 @@ fun SignUpScreen() {
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.padding(top = 20.dp))
+                    Spacer(modifier = Modifier.padding(top = 15.dp))
                     Text(
                         "Already have an account?",
                         style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
                     )
 
-
+                    Button(
+                        onClick = {
+//                                    navController.navigate("home")
+                        },
+                        modifier = Modifier
+                            .fillMaxSize().padding(top = 15.dp, bottom = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(23.dp),
+                        border = BorderStroke(1.dp , Color(0xFFF08F5F))
+                    ) {
+                        Text(
+                            text = "Log in",
+                            color = Color(0xFFF08F5F),
+                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+                        )
+                    }
                 }
+
             }
         }
     }

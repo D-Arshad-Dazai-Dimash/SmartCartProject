@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.LinearProgressIndicator
@@ -254,56 +253,6 @@ fun SignUpScreen() {
                             modifier = Modifier.clickable { /* Add link action here */ }
                         )
                     }
-//                    Button(
-//                        onClick = { },
-//                        modifier = Modifier.size(354.dp, 52.dp),
-//                        border = BorderStroke(1.dp, Color(0xFFD1CFCF)),
-//                        colors = ButtonColors(
-//                            containerColor = Color.White,
-//                            contentColor = Color.Black,
-//                            disabledContentColor = Color.Black,
-//                            disabledContainerColor = Color.White
-//                        ),
-//                        shape = RoundedCornerShape(18.dp)
-//                    ){
-//                        Text(
-//                            "Sign up",
-//                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
-//                            modifier = Modifier.padding(8.dp)
-//                        )
-//                    }
-
-
-//                    Button(
-//                        onClick = {
-//                            // Sign up logic
-//                            if (passwordError.isEmpty() && confirmPasswordError.isEmpty()) {
-//                                // Navigate to next screen (home)
-////                                navController.navigate("home")
-//                            }
-//                        },
-//                        enabled = isChecked, // Disable the button if checkbox is not checked
-//                        modifier = Modifier
-//                            .fillMaxWidth()
-//                            .height(48.dp), // Optional: Adjust the height if needed
-//                        colors = ButtonDefaults.buttonColors(
-//                            containerColor = Brush.horizontalGradient(
-//                                colors = listOf(
-//                                    Color(0xFFFCDCCD),
-//                                    Color(0xFFCE5F27)
-//                                )
-//                            ) // Make the background transparent to apply the gradient
-//                        ),
-//                    ) {
-//                        Text(
-//                            text = "Sign Up",
-//                            color = Color.White, // Text color
-//                            modifier = Modifier.align(Alignment.Center)
-//                        )
-//
-//                    }
-
-
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -326,10 +275,7 @@ fun SignUpScreen() {
                             },
                             enabled = isChecked,
                             modifier = Modifier
-                                .fillMaxSize(),
-//                            colors = ButtonDefaults.buttonColors(
-//                                containerColor = Color.Transparent
-//                            ),
+                                .fillMaxSize()
                         ) {
                             Text(
                                 text = "Sign Up",
@@ -338,6 +284,11 @@ fun SignUpScreen() {
                             )
                         }
                     }
+                    Spacer(modifier = Modifier.padding(top = 20.dp))
+                    Text(
+                        "Already have an account?",
+                        style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+                    )
 
 
                 }

@@ -50,7 +50,7 @@ fun LoginScreen(navController: NavController) {
     var isPasswordCorrect by remember { mutableStateOf(true) }
 
     // Simulate a simple password check (replace this with actual authentication logic)
-    val correctPassword = "Password123" // Simulated correct password for demonstration purposes
+    val correctPassword = "002016Zhh" // Simulated correct password for demonstration purposes
 
     // Validate the password
     fun validatePassword() {

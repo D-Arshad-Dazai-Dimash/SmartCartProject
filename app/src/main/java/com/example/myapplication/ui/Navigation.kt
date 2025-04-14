@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.myapplication.ui.screens.HomeScreen
+import com.example.myapplication.ui.screens.LoginScreen
 import com.example.myapplication.ui.screens.SignUpScreen
 import com.example.myapplication.ui.screens.WelcomeScreen
 
@@ -17,6 +18,7 @@ fun SetupNavGraph(navController: NavHostController) {
 //            WelcomeScreen()
         }
         composable("signup") { SignUpScreen(navController) }
+        composable("login") { LoginScreen(navController) }
         composable("home") { HomeScreen(navController) }
     }
 }

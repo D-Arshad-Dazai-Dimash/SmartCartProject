@@ -105,7 +105,7 @@ fun SignUpScreen(navController: NavController) {
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(top = 95.dp)
+                        .padding(top = 75.dp)
                         .fillMaxWidth()
                 ) {
                     Text(
@@ -124,7 +124,7 @@ fun SignUpScreen(navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 65.dp)
+                        .padding(top = 90.dp)
                 ) {
                     Button(
                         onClick = { },
@@ -150,7 +150,7 @@ fun SignUpScreen(navController: NavController) {
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.padding(bottom = 30.dp))
+                    Spacer(modifier = Modifier.padding(bottom = 38.dp))
 
                     CustomTextField(
                         value = name,
@@ -159,7 +159,7 @@ fun SignUpScreen(navController: NavController) {
                         placeholder = "Enter full name"
                     )
 
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.padding(top = 18.dp))
 
                     CustomTextField(
                         value = email,
@@ -169,14 +169,13 @@ fun SignUpScreen(navController: NavController) {
                         keyboardType = KeyboardType.Email
                     )
 
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
                     CustomTextField(
                         value = password,
                         onValueChange = {
                             password = it
-                            isPasswordFieldTouched =
-                                true // Mark that user started typing in password field
+                            isPasswordFieldTouched = true
                             validate()
                         },
                         label = "Password",
@@ -185,7 +184,7 @@ fun SignUpScreen(navController: NavController) {
                         error = passwordError
                     )
 
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(18.dp))
 
                     CustomTextField(
                         value = confirmPassword,
@@ -201,7 +200,7 @@ fun SignUpScreen(navController: NavController) {
                         error = confirmPasswordError
                     )
 
-                    Spacer(modifier = Modifier.height(15.dp))
+                    Spacer(modifier = Modifier.height(33.dp))
 
                     PasswordStrengthIndicator(
                         strength = passwordStrength,
@@ -265,18 +264,19 @@ fun SignUpScreen(navController: NavController) {
                                         Color(0xFFCE5F27)
                                     )
                                 ),
-                                shape = RoundedCornerShape(23.dp)
+                                shape = RoundedCornerShape(15.dp)
                             )
                     ) {
                         Button(
                             onClick = {
                                 if (passwordError.isEmpty() && confirmPasswordError.isEmpty()) {
-                                    navController.navigate("home")
+                                    navController.navigate("login")
                                 }
                             },
                             enabled = isChecked,
                             modifier = Modifier
-                                .fillMaxSize()
+                                .fillMaxSize(),
+                            shape = RoundedCornerShape(15.dp)
                         ) {
                             Text(
                                 text = "Sign Up",
@@ -285,33 +285,40 @@ fun SignUpScreen(navController: NavController) {
                             )
                         }
                     }
-                    Spacer(modifier = Modifier.padding(top = 15.dp))
+                    Spacer(modifier = Modifier.padding(top = 20.dp))
+
                     Text(
                         "Already have an account?",
                         style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
                     )
 
-                    Button(
-                        onClick = {
-                            navController.navigate("home")
-                        },
+                    Spacer(modifier = Modifier.padding(top = 20.dp))
+
+                    Box(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(top = 15.dp, bottom = 8.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(23.dp),
-                        border = BorderStroke(1.dp, Color(0xFFF08F5F))
+                            .fillMaxWidth()
+                            .height(52.dp)
                     ) {
-                        Text(
-                            text = "Log in",
-                            color = Color(0xFFF08F5F),
-                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
-                        )
+                        Button(
+                            onClick = {
+                                navController.navigate("login")
+                            },
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.White
+                            ),
+                            shape = RoundedCornerShape(15.dp),
+                            border = BorderStroke(1.dp, Color(0xFFF08F5F))
+                        ) {
+                            Text(
+                                text = "Log in",
+                                color = Color(0xFFF08F5F),
+                                style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium),
+                            )
+                        }
                     }
                 }
-
             }
         }
     }
@@ -373,7 +380,6 @@ fun CustomTextField(
             modifier = Modifier
                 .fillMaxWidth()
         )
-
         if (isError && error != null) {
             Text(text = error, color = Color.Red, style = MaterialTheme.typography.bodyMedium)
         }

@@ -270,7 +270,9 @@ fun SignUpScreen(navController: NavController) {
                         Button(
                             onClick = {
                                 if (passwordError.isEmpty() && confirmPasswordError.isEmpty()) {
-                                    navController.navigate("login")
+                                    navController.navigate("login") {
+                                        popUpTo("welcome") { inclusive = true } // Clear Welcome screen from back stack
+                                    }
                                 }
                             },
                             enabled = isChecked,
@@ -322,8 +324,8 @@ fun SignUpScreen(navController: NavController) {
             }
         }
     }
-
 }
+
 
 @Composable
 fun PasswordStrengthIndicator(strength: Float, strengthText: String) {

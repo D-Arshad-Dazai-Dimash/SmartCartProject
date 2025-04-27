@@ -35,14 +35,14 @@ fun BottomNavigationBar(navController: NavController) {
             .shadow(
                 elevation = 24.dp,
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                clip = false // Don't clip the shadow
+                clip = false
             )
-            .background(Color.White) // Ensure the background is white
+            .background(Color.White)
     ) {
         NavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp), // Adjust padding if necessary
+                .padding(bottom = 8.dp),
             containerColor = Color.White
         ) {
             val navBackStackEntry by navController.currentBackStackEntryAsState()

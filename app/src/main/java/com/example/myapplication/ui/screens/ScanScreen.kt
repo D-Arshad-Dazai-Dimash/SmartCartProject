@@ -10,8 +10,19 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,62 +32,125 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
+import com.example.myapplication.R
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
 
 @Composable
-fun ScanScreen(
-    navController: NavController,
-    onBarcodeScanned: (String) -> Unit
-) {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
+fun ScanScreen(navController: NavController, onBarcodeScanned: (String) -> Unit) {
+    var permissionGranted by remember { mutableStateOf(false) }
+    var scannedBarcode by remember { mutableStateOf<String?>(null) }
 
-    var hasCameraPermission by remember { mutableStateOf(false) }
-
-
+    // Request camera permission
     RequestCameraPermission(
-        onPermissionGranted = { hasCameraPermission = true },
-        onPermissionDenied = { /* Show error or message */ }
+        onPermissionGranted = { permissionGranted = true },
+        onPermissionDenied = { }
     )
 
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            hasCameraPermission = isGranted
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Show the camera preview if permission is granted
+        if (permissionGranted) {
+            CameraPreview(
+                context = LocalContext.current,
+                lifecycleOwner = LocalLifecycleOwner.current,
+                onBarcodeScanned = { barcode ->
+                    scannedBarcode = barcode
+                    println("Scanned product : $barcode")
+                    onBarcodeScanned(barcode)
+                }
+            )
         }
-    )
 
 
 
-    LaunchedEffect(Unit) {
-        permissionLauncher.launch(Manifest.permission.CAMERA)
-    }
-
-    if (hasCameraPermission) {
-        CameraPreview(
-            context = context,
-            lifecycleOwner = lifecycleOwner,
-            onBarcodeScanned = onBarcodeScanned
+        // Back arrow button
+        Image(
+            painter = painterResource(id = R.drawable.arrow_back),
+            contentDescription = "Back arrow",
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(10.dp)
+                .size(45.dp, 44.dp)
+                .clickable {
+                    navController.popBackStack("home", inclusive = false)
+                }
         )
-    } else {
+
         Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.8f)
+                .padding(16.dp)
         ) {
-            Text(text = "Camera permission is required to scan barcodes.")
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val canvasWidth = size.width
+                val canvasHeight = size.height
+
+                val rectWidth = canvasWidth * 0.8f
+                val rectHeight = canvasHeight * 0.6f
+                val left = (canvasWidth - rectWidth) / 2
+                val top = (canvasHeight - rectHeight) / 2
+
+                drawRoundRect(
+                    color = Color.White.copy(0.5f),
+                    size = Size(rectWidth, rectHeight),
+                    topLeft = Offset(left, top),
+                    style = Stroke(width = 4.dp.toPx()),
+                    cornerRadius = CornerRadius(50f, 50f)
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
+        ) {
+            scannedBarcode?.let {
+                Text(
+                    text = "Scanned Barcode: $it",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .background(Color.Black.copy(alpha = 0.7f))
+                        .padding(8.dp),
+                    color = Color.White
+                )
+            }
+
+            Button(
+                onClick = {
+                    // Only navigate if barcode is scanned
+                    scannedBarcode?.let {
+                        navController.navigate("cart/$it")
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
+                Text(text = "Go to Cart with Barcode")
+            }
         }
     }
 }
+
+
+
 
 @SuppressLint("UnsafeOptInUsageError")
 @Composable

@@ -48,7 +48,7 @@ fun LoginScreen(navController: NavController) {
     var passwordError by remember { mutableStateOf("") }
     var isPasswordCorrect by remember { mutableStateOf(true) }
 
-    val correctPassword = "002016Zhh+"
+    val correctPassword = "1"
 
     fun validatePassword() {
         if (password != correctPassword) {
@@ -158,7 +158,9 @@ fun LoginScreen(navController: NavController) {
                         onClick = {
                             validatePassword()
                             if (isPasswordCorrect) {
-                                navController.navigate("home")
+                                navController.navigate("home") {
+                                    popUpTo("welcome") { inclusive = true } // Clear Welcome screen from back stack
+                                }
                             }
                         },
                         enabled = email.isNotEmpty() && password.isNotEmpty(),
@@ -224,7 +226,9 @@ fun LoginScreen(navController: NavController) {
                 ) {
                     Button(
                         onClick = {
-                            navController.navigate("signup")
+                            navController.navigate("signup") {
+                                popUpTo("welcome") { inclusive = true } // Clear Welcome screen from back stack
+                            }
                         },
                         modifier = Modifier
                             .fillMaxSize(),

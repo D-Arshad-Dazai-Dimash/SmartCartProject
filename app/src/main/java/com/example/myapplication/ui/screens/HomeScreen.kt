@@ -10,19 +10,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.myapplication.ui.components.HomeScreen.ActionButtons
-//import com.example.myapplication.ui.components.HomeScreen.BottomNavigationBar
+import com.example.myapplication.ui.components.BottomNavigationBar
 import com.example.myapplication.ui.components.HomeScreen.Header
 import com.example.myapplication.ui.components.HomeScreen.WelcomeMessage
 
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
+
     Scaffold(
         containerColor = Color.White,
-//        bottomBar = { BottomNavigationBar(navController = navController) },
+        bottomBar = { BottomNavigationBar(navController = navController) },
         content = { paddingValues ->
             Column(
                 modifier = Modifier

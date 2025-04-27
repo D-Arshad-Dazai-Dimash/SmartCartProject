@@ -131,7 +131,7 @@ fun PagerIndicators(pagerItemCount: Int) {
         horizontalArrangement = Arrangement.Center
     ) {
         repeat(pagerItemCount) { index ->
-            val dotColor = if (index == pagerState.currentPage) Color(0xffFB7185) else Color(0xffFB7185).copy(0.5f)
+            val dotColor = if (index == pagerState.currentPage) Color.White else Color.White.copy(0.5f)
             Box(
                 modifier = Modifier
                     .size(8.dp)

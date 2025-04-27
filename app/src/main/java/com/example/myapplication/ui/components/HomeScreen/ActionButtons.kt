@@ -32,9 +32,9 @@ fun ActionButtons() {
                 "Page 3: Next Step"
             ),
             backgroundImages = listOf(
-                painterResource(id = R.drawable.ic_launcher_background), // Replace with actual image resources
-                painterResource(id = R.drawable.image_icon3), // Replace with actual image resources
-                painterResource(id = R.drawable.image_icon)  // Replace with actual image resources
+                painterResource(id = R.drawable.ic_launcher_background),
+                painterResource(id = R.drawable.image_icon3),
+                painterResource(id = R.drawable.image_icon)
             ),
             cardWidth = 370.dp,
             cardHeight = 150.dp

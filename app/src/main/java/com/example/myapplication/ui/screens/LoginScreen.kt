@@ -43,7 +43,6 @@ import com.example.myapplication.ui.components.PutBackGroundImage
 //@Preview(showBackground = true)
 @Composable
 fun LoginScreen(navController: NavController) {
-//fun LoginScreen() {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
@@ -51,7 +50,6 @@ fun LoginScreen(navController: NavController) {
 
     val correctPassword = "002016Zhh+"
 
-    // Validate the password
     fun validatePassword() {
         if (password != correctPassword) {
             isPasswordCorrect = false
@@ -100,7 +98,6 @@ fun LoginScreen(navController: NavController) {
                     .fillMaxWidth()
                     .padding(top = 150.dp)
             ) {
-                // Email Field
                 CustomTextField(
                     value = email,
                     onValueChange = { email = it },
@@ -111,7 +108,6 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(22.dp))
 
-                // Password Field
                 CustomTextField(
                     value = password,
                     onValueChange = {
@@ -179,7 +175,6 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(115.dp))
 
-                // Google Login Button
                 Button(
                     onClick = { },
                     modifier = Modifier.size(354.dp, 52.dp),

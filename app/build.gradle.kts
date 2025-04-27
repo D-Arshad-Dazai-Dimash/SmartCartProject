@@ -70,4 +70,13 @@ dependencies {
     implementation (libs.androidx.navigation.compose)
     implementation (libs.accompanist.pager)
     implementation ("androidx.compose.material3:material3:1.0.0")
+
+    implementation ("androidx.camera:camera-core:1.1.0")
+    implementation ("androidx.camera:camera-camera2:1.1.0")
+    implementation ("androidx.camera:camera-lifecycle:1.1.0")
+    implementation ("androidx.camera:camera-view:1.0.0-alpha32")
+    implementation ("com.google.mlkit:barcode-scanning:17.0.2")
+    implementation ("androidx.activity:activity-compose:1.5.0")
+
+
 }

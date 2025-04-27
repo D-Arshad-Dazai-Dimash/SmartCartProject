@@ -19,6 +19,6 @@ fun SetupNavGraph(navController: NavHostController) {
         }
         composable("signup") { SignUpScreen(navController) }
         composable("login") { LoginScreen(navController) }
-        composable("home") { HomeScreen(navController) }
+        composable("home") { HomeScreen() }
     }
 }

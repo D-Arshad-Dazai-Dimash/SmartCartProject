@@ -19,7 +19,6 @@ fun ActionButtons() {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-//        verticalArrangement = Arrangement.spacedBy(13.dp)
 
     ) {
         ActionCard(

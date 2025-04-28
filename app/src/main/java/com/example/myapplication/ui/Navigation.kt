@@ -3,6 +3,7 @@ package com.example.myapplication.ui
 import ScanScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,14 +13,15 @@ import com.example.myapplication.ui.screens.HomeScreen
 import com.example.myapplication.ui.screens.LoginScreen
 import com.example.myapplication.ui.screens.SignUpScreen
 import com.example.myapplication.ui.screens.WelcomeScreen
+import com.example.myapplication.viewModel.CartViewModel
 
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
 
-    // Assume we check if the user is signed in or not
-    val isUserSignedIn = remember { /* Retrieve this from SharedPreferences or Firebase */ true } // Replace with actual check
+    val cartViewModel: CartViewModel = viewModel()
 
-    // Start the NavHost based on whether the user is signed in or not
+    val isUserSignedIn = remember { true }
+
     val startDestination = if (isUserSignedIn) "home" else "welcome"
 
     NavHost(navController = navController, startDestination = startDestination) {
@@ -30,21 +32,19 @@ fun SetupNavGraph(navController: NavHostController) {
         composable("login") { LoginScreen(navController) }
         composable("home") { HomeScreen(navController) }
         composable("history") { HistoryScreen(navController) }
+
         composable("scan") {
             ScanScreen(
                 navController = navController,
-                onBarcodeScanned = { barcode ->
-                    println("Scanned barcode: $barcode")
-                    // Navigate to Cart, and clear previous screens on the stack
-                    navController.navigate("cart/$barcode") {
-                        popUpTo("home") { inclusive = true }
-                        launchSingleTop = true // Prevents pushing the same screen again
-                    }
-                })
+                cartViewModel = cartViewModel
+            )
         }
-        composable("cart/{barcode}") { backStackEntry ->
-            val barcode = backStackEntry.arguments?.getString("barcode")
-            CartScreen(navController = navController, barcode = barcode)
+
+        composable("cart") {
+            CartScreen(
+                navController = navController,
+                cartViewModel = cartViewModel
+            )
         }
     }
 }

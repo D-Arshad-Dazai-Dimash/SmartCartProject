@@ -139,7 +139,6 @@ fun LoginScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(27.33.dp))
 
-                // Log in Button (validates password)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -159,7 +158,7 @@ fun LoginScreen(navController: NavController) {
                             validatePassword()
                             if (isPasswordCorrect) {
                                 navController.navigate("home") {
-                                    popUpTo("welcome") { inclusive = true } // Clear Welcome screen from back stack
+                                    popUpTo("welcome") { inclusive = true }
                                 }
                             }
                         },
@@ -227,7 +226,7 @@ fun LoginScreen(navController: NavController) {
                     Button(
                         onClick = {
                             navController.navigate("signup") {
-                                popUpTo("welcome") { inclusive = true } // Clear Welcome screen from back stack
+                                popUpTo("welcome") { inclusive = true }
                             }
                         },
                         modifier = Modifier

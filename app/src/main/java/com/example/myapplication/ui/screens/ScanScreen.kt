@@ -12,11 +12,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,39 +43,44 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.myapplication.R
+import com.example.myapplication.viewModel.CartViewModel
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
 
 @Composable
-fun ScanScreen(navController: NavController, onBarcodeScanned: (String) -> Unit) {
+fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
     var permissionGranted by remember { mutableStateOf(false) }
     var scannedBarcode by remember { mutableStateOf<String?>(null) }
 
-    // Request camera permission
     RequestCameraPermission(
         onPermissionGranted = { permissionGranted = true },
         onPermissionDenied = { }
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Show the camera preview if permission is granted
         if (permissionGranted) {
             CameraPreview(
                 context = LocalContext.current,
                 lifecycleOwner = LocalLifecycleOwner.current,
                 onBarcodeScanned = { barcode ->
                     scannedBarcode = barcode
-                    println("Scanned product : $barcode")
-                    onBarcodeScanned(barcode)
+                    cartViewModel.addBarcode(barcode)
+                    println("Scanned product: $barcode")
                 }
             )
         }
 
-
-
-        // Back arrow button
+        scannedBarcode?.let {
+            Text(
+                text = "Last Scanned Barcode: $it",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp),
+                color = Color.White
+            )
+        }
         Image(
             painter = painterResource(id = R.drawable.arrow_back),
             contentDescription = "Back arrow",
@@ -89,7 +92,6 @@ fun ScanScreen(navController: NavController, onBarcodeScanned: (String) -> Unit)
                     navController.popBackStack("home", inclusive = false)
                 }
         )
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -121,35 +123,21 @@ fun ScanScreen(navController: NavController, onBarcodeScanned: (String) -> Unit)
                 .align(Alignment.BottomCenter)
                 .padding(16.dp)
         ) {
-            scannedBarcode?.let {
-                Text(
-                    text = "Scanned Barcode: $it",
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .background(Color.Black.copy(alpha = 0.7f))
-                        .padding(8.dp),
-                    color = Color.White
-                )
-            }
-
             Button(
                 onClick = {
-                    // Only navigate if barcode is scanned
-                    scannedBarcode?.let {
-                        navController.navigate("cart/$it")
+                    if (cartViewModel.scannedBarcodes.value.isNotEmpty()) {
+                        navController.navigate("cart")
                     }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
             ) {
-                Text(text = "Go to Cart with Barcode")
+                Text(text = "Go to Cart with Scanned Barcodes")
             }
         }
     }
 }
-
-
 
 
 @SuppressLint("UnsafeOptInUsageError")

@@ -71,9 +71,9 @@ fun SignUpScreen(navController: NavController) {
     fun validate() {
         // Password strength calculation
         passwordStrength = when {
-            password.length in 1..5 -> 0.25f // Weak password
-            password.length in 6..8 -> 0.5f  // Medium strength
-            password.length >= 9 -> 1f       // Strong password
+            password.length in 1..5 -> 0.25f
+            password.length in 6..8 -> 0.5f
+            password.length >= 9 -> 1f
             else -> 0f
         }
 
@@ -191,7 +191,7 @@ fun SignUpScreen(navController: NavController) {
                         onValueChange = {
                             confirmPassword = it
                             isConfirmPasswordFieldTouched =
-                                true // Mark that user started typing in confirm password field
+                                true
                             validate()
                         },
                         label = "Confirm Password",
@@ -271,7 +271,7 @@ fun SignUpScreen(navController: NavController) {
                             onClick = {
                                 if (passwordError.isEmpty() && confirmPasswordError.isEmpty()) {
                                     navController.navigate("login") {
-                                        popUpTo("welcome") { inclusive = true } // Clear Welcome screen from back stack
+                                        popUpTo("welcome") { inclusive = true }
                                     }
                                 }
                             },

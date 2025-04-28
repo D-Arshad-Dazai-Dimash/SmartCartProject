@@ -41,10 +41,10 @@ fun ActionCard(
     count: String,
     cardHeight: Dp = 100.dp,
     cardWidth: Dp = 200.dp,
-    isSwappable: Boolean = false,  // New parameter to enable swipe functionality
-    pagerItems: List<String> = emptyList(),  // List of items for the pager
-    backgroundImages: List<Painter> = emptyList(),  // List of background images for the swipeable pager
-    icon: Painter? = null  // New parameter for the icon
+    isSwappable: Boolean = false,
+    pagerItems: List<String> = emptyList(),
+    backgroundImages: List<Painter> = emptyList(),
+    icon: Painter? = null
 ) {
     Card(
         modifier = Modifier
@@ -62,11 +62,9 @@ fun ActionCard(
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
-            // If it's swappable, show the pager content
             if (isSwappable && pagerItems.isNotEmpty()) {
                 SwipeablePager(pagerItems = pagerItems , backgroundImages)
             } else {
-                // Non-swappable card content (icon and text)
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -74,17 +72,15 @@ fun ActionCard(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    // Display icon (if provided)
                     icon?.let {
                         Image(
                             painter = it,
                             contentDescription = null,
-                            modifier = Modifier.size(55.dp),  // Image size 55x55
+                            modifier = Modifier.size(55.dp),
                             contentScale = ContentScale.Fit
                         )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))  // Space between icon and text
-                    // Display label (text)
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = label,
                         style = TextStyle(
@@ -93,8 +89,7 @@ fun ActionCard(
                             color = Color.Black
                         )
                     )
-                    Spacer(modifier = Modifier.height(4.dp))  // Space between label and count
-                    // Display count (text)
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = count,
                         style = TextStyle(
@@ -105,12 +100,10 @@ fun ActionCard(
                     )
                 }
             }
-
-            // If it's swappable, add page indicators at the bottom of the card
             if (isSwappable && pagerItems.isNotEmpty()) {
                 Box(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter) // Align the dots at the bottom center of the card
+                        .align(Alignment.BottomCenter)
                         .padding(bottom = 8.dp)
                 ) {
                     PagerIndicators(pagerItemCount = pagerItems.size)
@@ -154,7 +147,6 @@ fun SwipeablePager(pagerItems: List<String>, backgroundImages: List<Painter>) {
         state = pagerState,
         modifier = Modifier.fillMaxSize()
     ) { page ->
-        // Display the content of each page in the pager
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize()

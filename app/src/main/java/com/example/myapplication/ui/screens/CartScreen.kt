@@ -7,12 +7,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.myapplication.viewModel.CartViewModel
 
 @Composable
-fun CartScreen(navController: NavController, barcode: String?) {
+fun CartScreen(navController: NavController,cartViewModel: CartViewModel) {
+    val scannedBarcodes = cartViewModel.scannedBarcodes.value
+
     Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "Scanned Barcode: $barcode")
-        // Here you can add your logic for displaying products, adding them to the cart, etc.
+        Text(text = "Scanned Barcodes:")
+
+        if (scannedBarcodes.isEmpty()) {
+            Text("No items in cart")
+        } else {
+            scannedBarcodes.forEach { barcode ->
+                Text(text = "Scanned Barcode: $barcode", modifier = Modifier.padding(vertical = 4.dp))
+
+            }
+        }
     }
 }
+
 

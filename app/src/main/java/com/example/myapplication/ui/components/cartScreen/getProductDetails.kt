@@ -12,11 +12,18 @@ fun getProductDetails(barcode: String): Product {
             imageResId = R.drawable.fusetea
         )
 
+        "40822426" -> Product(
+            barcode = barcode,
+            name = "bon aqua 0.5л",
+            price = 300.0,
+            imageResId = R.drawable.bon_aqua
+        )
+
         else -> Product(
             barcode = barcode,
-            name = "Unknown Product",
-            price = 0.0,
-            imageResId = R.drawable.white_square
+            name = "bon aqua 0.5л",
+            price = 300.0,
+            imageResId = R.drawable.bon_aqua
         )
     }
 }

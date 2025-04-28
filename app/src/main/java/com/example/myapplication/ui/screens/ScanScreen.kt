@@ -43,6 +43,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.myapplication.R
+import com.example.myapplication.ui.components.cartScreen.getProductDetails
 import com.example.myapplication.viewModel.CartViewModel
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -56,7 +57,13 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
 
     RequestCameraPermission(
         onPermissionGranted = { permissionGranted = true },
-        onPermissionDenied = { }
+        onPermissionDenied = { /* Handle permission denial if needed */ },
+        onBarcodeScanned = { barcode ->
+            scannedBarcode = barcode
+            val product = getProductDetails(barcode)
+            cartViewModel.addProduct(product)
+            println("Scanned product: $barcode")
+        }
     )
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -66,7 +73,8 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
                 lifecycleOwner = LocalLifecycleOwner.current,
                 onBarcodeScanned = { barcode ->
                     scannedBarcode = barcode
-                    cartViewModel.addBarcode(barcode)
+                    val product = getProductDetails(barcode)
+                    cartViewModel.addProduct(product)
                     println("Scanned product: $barcode")
                 }
             )
@@ -81,6 +89,7 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
                 color = Color.White
             )
         }
+
         Image(
             painter = painterResource(id = R.drawable.arrow_back),
             contentDescription = "Back arrow",
@@ -92,6 +101,7 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
                     navController.popBackStack("home", inclusive = false)
                 }
         )
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -125,7 +135,7 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
         ) {
             Button(
                 onClick = {
-                        navController.navigate("cart")
+                    navController.navigate("cart")
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -136,7 +146,6 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
         }
     }
 }
-
 
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
@@ -220,7 +229,8 @@ private fun processImageProxy(
 @Composable
 fun RequestCameraPermission(
     onPermissionGranted: () -> Unit,
-    onPermissionDenied: () -> Unit
+    onPermissionDenied: () -> Unit,
+    onBarcodeScanned: (String) -> Unit
 ) {
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
@@ -237,4 +247,3 @@ fun RequestCameraPermission(
         permissionLauncher.launch(Manifest.permission.CAMERA)
     }
 }
-

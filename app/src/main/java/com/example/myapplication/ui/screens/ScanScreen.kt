@@ -125,9 +125,7 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
         ) {
             Button(
                 onClick = {
-                    if (cartViewModel.scannedBarcodes.value.isNotEmpty()) {
                         navController.navigate("cart")
-                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()

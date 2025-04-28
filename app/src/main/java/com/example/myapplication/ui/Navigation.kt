@@ -20,7 +20,7 @@ fun SetupNavGraph(navController: NavHostController) {
 
     val cartViewModel: CartViewModel = viewModel()
 
-    val isUserSignedIn = remember { true }
+    val isUserSignedIn = remember { false }
 
     val startDestination = if (isUserSignedIn) "home" else "welcome"
 

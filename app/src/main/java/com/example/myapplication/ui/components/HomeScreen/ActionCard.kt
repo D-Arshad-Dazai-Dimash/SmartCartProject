@@ -2,6 +2,7 @@ package com.example.myapplication.ui.components.HomeScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -44,13 +46,20 @@ fun ActionCard(
     isSwappable: Boolean = false,
     pagerItems: List<String> = emptyList(),
     backgroundImages: List<Painter> = emptyList(),
-    icon: Painter? = null
+    icon: Painter? = null,
+    navController: NavController,
+    destination: String
 ) {
     Card(
         modifier = Modifier
             .height(cardHeight)
             .width(cardWidth)
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable {
+                navController.navigate(destination) {
+                    launchSingleTop = true
+                }
+            },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFFF7EFEE),
@@ -63,7 +72,7 @@ fun ActionCard(
             modifier = Modifier.fillMaxSize()
         ) {
             if (isSwappable && pagerItems.isNotEmpty()) {
-                SwipeablePager(pagerItems = pagerItems , backgroundImages)
+                SwipeablePager(pagerItems = pagerItems, backgroundImages = backgroundImages)
             } else {
                 Column(
                     modifier = Modifier
@@ -112,6 +121,7 @@ fun ActionCard(
         }
     }
 }
+
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable

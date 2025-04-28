@@ -40,7 +40,7 @@ fun HomeScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(24.dp))
                 WelcomeMessage()
                 Spacer(modifier = Modifier.height(24.dp))
-                ActionButtons()
+                ActionButtons(navController = navController)
             }
         }
     )

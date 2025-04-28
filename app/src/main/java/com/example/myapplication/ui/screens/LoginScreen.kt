@@ -48,7 +48,7 @@ fun LoginScreen(navController: NavController) {
     var passwordError by remember { mutableStateOf("") }
     var isPasswordCorrect by remember { mutableStateOf(true) }
 
-    val correctPassword = "1"
+    val correctPassword = "002016Zhh+"
 
     fun validatePassword() {
         if (password != correctPassword) {

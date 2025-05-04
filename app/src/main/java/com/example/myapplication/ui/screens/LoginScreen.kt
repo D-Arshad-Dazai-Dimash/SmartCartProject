@@ -1,5 +1,9 @@
 package com.example.myapplication.ui.screens
 
+import android.app.Activity
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -39,24 +44,112 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.PutBackGroundImage
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 
-//@Preview(showBackground = true)
 @Composable
 fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordError by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
     var isPasswordCorrect by remember { mutableStateOf(true) }
 
-    val correctPassword = "1"
+    val auth = FirebaseAuth.getInstance()
+
+    val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        .requestIdToken("YOUR_SERVER_CLIENT_ID.apps.googleusercontent.com")  // Добавьте свой Client ID
+        .requestEmail()
+        .build()
+
+    val googleSignInClient = GoogleSignIn.getClient(LocalContext.current, googleSignInOptions)
+
+    val googleSignInLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val account = GoogleSignIn.getSignedInAccountFromIntent(result.data).result
+            account?.let {
+                val credential = GoogleAuthProvider.getCredential(it.idToken, null)
+                auth.signInWithCredential(credential)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val user: FirebaseUser? = auth.currentUser
+                            user?.let {
+                                if (it.isEmailVerified) {
+                                    navController.navigate("home") {
+                                        popUpTo("welcome") { inclusive = true }
+                                    }
+                                } else {
+                                    errorMessage = "Please verify your email before logging in."
+                                    Toast.makeText(
+                                        navController.context,
+                                        errorMessage,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+                        } else {
+                            errorMessage = task.exception?.message ?: "Google Sign-In failed"
+                            Toast.makeText(navController.context, errorMessage, Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    }
+            }
+        }
+    }
 
     fun validatePassword() {
-        if (password != correctPassword) {
+        if (password.isEmpty()) {
             isPasswordCorrect = false
-            passwordError = "Incorrect password"
+            passwordError = "Password cannot be empty"
         } else {
             isPasswordCorrect = true
             passwordError = ""
+        }
+    }
+
+    fun loginUser() {
+        validatePassword()
+
+        if (isPasswordCorrect) {
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val user = auth.currentUser
+                        user?.reload()?.addOnCompleteListener { reloadTask ->
+                            if (reloadTask.isSuccessful) {
+                                if (user.isEmailVerified) {
+                                    navController.navigate("home") {
+                                        popUpTo("welcome") { inclusive = true }
+                                    }
+                                } else {
+                                    errorMessage = "Please verify your email address."
+                                    Toast.makeText(
+                                        navController.context,
+                                        errorMessage,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } else {
+                                errorMessage =
+                                    "Failed to reload user data: ${reloadTask.exception?.message}"
+                                Toast.makeText(
+                                    navController.context,
+                                    errorMessage,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    } else {
+                        errorMessage = task.exception?.message ?: "Login failed"
+                        Toast.makeText(navController.context, errorMessage, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
         }
     }
 
@@ -91,7 +184,6 @@ fun LoginScreen(navController: NavController) {
                 )
             }
 
-
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -119,7 +211,6 @@ fun LoginScreen(navController: NavController) {
                     visualTransformation = PasswordVisualTransformation(),
                     error = passwordError
                 )
-
 
                 Spacer(modifier = Modifier.height(37.dp))
 
@@ -154,14 +245,7 @@ fun LoginScreen(navController: NavController) {
                         )
                 ) {
                     Button(
-                        onClick = {
-                            validatePassword()
-                            if (isPasswordCorrect) {
-                                navController.navigate("home") {
-                                    popUpTo("welcome") { inclusive = true }
-                                }
-                            }
-                        },
+                        onClick = { loginUser() },
                         enabled = email.isNotEmpty() && password.isNotEmpty(),
                         modifier = Modifier.fillMaxSize(),
                         shape = RoundedCornerShape(15.dp)
@@ -177,7 +261,10 @@ fun LoginScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(27.dp))
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                        val signInIntent = googleSignInClient.signInIntent
+                        googleSignInLauncher.launch(signInIntent)
+                    },
                     modifier = Modifier.size(354.dp, 52.dp),
                     border = BorderStroke(1.dp, Color(0xFFD1CFCF)),
                     colors = ButtonDefaults.buttonColors(
@@ -207,7 +294,6 @@ fun LoginScreen(navController: NavController) {
                 )
 
                 Spacer(modifier = Modifier.height(19.dp))
-
 
                 Box(
                     modifier = Modifier
@@ -248,3 +334,4 @@ fun LoginScreen(navController: NavController) {
         }
     }
 }
+//Assylzhan

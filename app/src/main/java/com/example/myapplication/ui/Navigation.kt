@@ -22,14 +22,14 @@ fun SetupNavGraph(navController: NavHostController) {
 
     val isUserSignedIn = remember { false }
 
-    val startDestination = if (isUserSignedIn) "home" else "home"
+    val startDestination = if (isUserSignedIn) "home" else "welcome"
 
-    NavHost(navController = navController, startDestination = "welcome") {
+    NavHost(navController = navController, startDestination = startDestination) {
         composable("welcome") {
             WelcomeScreen(navController)
         }
-        composable("signup") { SignUpScreen(navController) }
-        composable("login") { LoginScreen(navController) }
+        composable("login") { LoginScreen(navController) } //
+        composable("signup") { SignUpScreen(navController) } //
         composable("home") { HomeScreen(navController) }
         composable("history") { HistoryScreen(navController) }
 

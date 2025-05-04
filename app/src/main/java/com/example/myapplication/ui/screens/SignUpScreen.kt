@@ -1,13 +1,11 @@
 package com.example.myapplication.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -25,8 +23,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -51,17 +47,16 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.PutBackGroundImage
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
 
-//@Preview(showBackground = true)
 @Composable
 fun SignUpScreen(navController: NavController) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-
-    var isPasswordFieldTouched by remember { mutableStateOf(false) }
-    var isConfirmPasswordFieldTouched by remember { mutableStateOf(false) }
 
     var passwordStrength by remember { mutableStateOf(0f) }
     var passwordStrengthText by remember { mutableStateOf("At least 8 characters") }
@@ -70,8 +65,9 @@ fun SignUpScreen(navController: NavController) {
 
     var isChecked by remember { mutableStateOf(false) }
 
+    val auth = FirebaseAuth.getInstance()
+
     fun validate() {
-        // Password strength calculation
         passwordStrength = when {
             password.length in 1..5 -> 0.25f
             password.length in 6..8 -> 0.5f
@@ -87,9 +83,72 @@ fun SignUpScreen(navController: NavController) {
         }
 
         passwordError =
-            if (password.matches(regex = Regex("^(?=.*[A-Z].*[A-Z])(?=.*[!@#\$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}\$"))) "At least 8 characters" else ""
+            if (password.matches(Regex("^(?=.*[A-Z].*[A-Z])(?=.*[!@#\$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}\$"))) "At least 8 characters" else ""
         confirmPasswordError = if (confirmPassword != password) "Passwords do not match" else ""
+
+        isChecked =
+            passwordError.isEmpty() && confirmPasswordError.isEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty()
     }
+
+    fun registerUser() {
+        validate()
+
+        if (passwordError.isEmpty() && confirmPasswordError.isEmpty()) {
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val user: FirebaseUser? = auth.currentUser
+                        val userId = user?.uid ?: return@addOnCompleteListener
+
+                        user?.sendEmailVerification()?.addOnCompleteListener { verificationTask ->
+                            if (verificationTask.isSuccessful) {
+                                Toast.makeText(
+                                    navController.context,
+                                    "Verification email sent. Please check your inbox.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+
+                                val userDatabaseRef =
+                                    FirebaseDatabase.getInstance().getReference("users")
+                                val userData = mapOf("name" to name, "email" to email)
+
+                                userDatabaseRef.child(userId).setValue(userData)
+                                    .addOnCompleteListener { dbTask ->
+                                        if (dbTask.isSuccessful) {
+                                            Toast.makeText(
+                                                navController.context,
+                                                "Registration Successful",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            navController.navigate("login")
+                                        } else {
+                                            Toast.makeText(
+                                                navController.context,
+                                                "Database error: ${dbTask.exception?.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                            } else {
+                                Toast.makeText(
+                                    navController.context,
+                                    "Failed to send verification email: ${verificationTask.exception?.message}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    } else {
+                        Toast.makeText(
+                            navController.context,
+                            "Registration failed: ${task.exception?.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+        }
+    }
+
 
     Box(
         modifier = Modifier
@@ -123,12 +182,14 @@ fun SignUpScreen(navController: NavController) {
                         fontWeight = FontWeight.SemiBold
                     )
                 }
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 90.dp)
                 ) {
+
                     Button(
                         onClick = { },
                         modifier = Modifier.size(354.dp, 52.dp),
@@ -153,7 +214,7 @@ fun SignUpScreen(navController: NavController) {
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.padding(bottom = 27.dp))
+                    Spacer(modifier = Modifier.padding(bottom = 18.dp))
 
                     CustomTextField(
                         value = name,
@@ -163,6 +224,7 @@ fun SignUpScreen(navController: NavController) {
                     )
 
                     Spacer(modifier = Modifier.padding(top = 10.dp))
+
 
                     CustomTextField(
                         value = email,
@@ -178,7 +240,6 @@ fun SignUpScreen(navController: NavController) {
                         value = password,
                         onValueChange = {
                             password = it
-                            isPasswordFieldTouched = true
                             validate()
                         },
                         label = "Password",
@@ -193,8 +254,6 @@ fun SignUpScreen(navController: NavController) {
                         value = confirmPassword,
                         onValueChange = {
                             confirmPassword = it
-                            isConfirmPasswordFieldTouched =
-                                true
                             validate()
                         },
                         label = "Confirm Password",
@@ -210,52 +269,6 @@ fun SignUpScreen(navController: NavController) {
                         strengthText = passwordStrengthText
                     )
 
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start,
-                        modifier = Modifier.fillMaxWidth()
-
-                    ) {
-                        Checkbox(
-                            checked = isChecked,
-                            onCheckedChange = { isChecked = it },
-                            colors = CheckboxColors(
-                                checkedBorderColor = Color(0xFFD1CFCF),
-                                disabledBorderColor = Color(0xFFD1CFCF),
-                                checkedBoxColor = Color.White,
-                                checkedCheckmarkColor = Color.Black,
-                                uncheckedBoxColor = Color.White,
-                                uncheckedCheckmarkColor = Color.Black,
-                                uncheckedBorderColor = Color(0xFFD1CFCF),
-                                disabledCheckedBoxColor = Color.White,
-                                disabledUncheckedBoxColor = Color.White,
-                                disabledUncheckedBorderColor = Color(0xFFD1CFCF),
-                                disabledIndeterminateBorderColor = Color(0xFFD1CFCF),
-                                disabledIndeterminateBoxColor = Color(0xFFD1CFCF)
-                            )
-                        )
-                        Text(
-                            text = "I agree with ",
-                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                        )
-                        Text(
-                            text = "Terms",
-                            color = Color.Blue,
-                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
-                            modifier = Modifier.clickable { /* Add link action here */ }
-                        )
-                        Text(
-                            text = " and ",
-                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
-                        )
-                        Text(
-                            text = "Privacy",
-                            color = Color.Blue,
-                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
-                            modifier = Modifier.clickable { /* Add link action here */ }
-                        )
-                    }
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -271,16 +284,9 @@ fun SignUpScreen(navController: NavController) {
                             )
                     ) {
                         Button(
-                            onClick = {
-                                if (passwordError.isEmpty() && confirmPasswordError.isEmpty()) {
-                                    navController.navigate("login") {
-                                        popUpTo("welcome") { inclusive = true }
-                                    }
-                                }
-                            },
+                            onClick = { registerUser() },
                             enabled = isChecked,
-                            modifier = Modifier
-                                .fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             shape = RoundedCornerShape(15.dp)
                         ) {
                             Text(
@@ -290,6 +296,7 @@ fun SignUpScreen(navController: NavController) {
                             )
                         }
                     }
+
                     Spacer(modifier = Modifier.padding(top = 20.dp))
 
                     Text(
@@ -298,6 +305,7 @@ fun SignUpScreen(navController: NavController) {
                     )
 
                     Spacer(modifier = Modifier.padding(top = 20.dp))
+
 
                     Box(
                         modifier = Modifier
@@ -308,8 +316,7 @@ fun SignUpScreen(navController: NavController) {
                             onClick = {
                                 navController.navigate("login")
                             },
-                            modifier = Modifier
-                                .fillMaxSize(),
+                            modifier = Modifier.fillMaxSize(),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.White
                             ),
@@ -390,3 +397,4 @@ fun CustomTextField(
         }
     }
 }
+//Assylzhan

@@ -49,12 +49,12 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.viewModel.CartViewModel
+import com.example.myapplication.viewModel.getProductDetailsFromFirebase
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
-import java.util.concurrent.Executors
-import com.example.myapplication.viewModel.getProductDetailsFromFirebase
 import kotlinx.coroutines.delay
+import java.util.concurrent.Executors
 
 
 fun playSound(context: Context) {
@@ -64,12 +64,13 @@ fun playSound(context: Context) {
     )
     mediaPlayer.start()
 }
+
 @Composable
 fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
     var permissionGranted by remember { mutableStateOf(false) }
     var scannedBarcode by remember { mutableStateOf<String?>(null) }
-    var productName by remember { mutableStateOf<String?>(null) }  // Хранение имени товара
-    var productAdded by remember { mutableStateOf(false) }  // Флаг для отображения уведомления
+    var productName by remember { mutableStateOf<String?>(null) }
+    var productAdded by remember { mutableStateOf(false) }
 
     RequestCameraPermission(
         onPermissionGranted = { permissionGranted = true },
@@ -89,7 +90,7 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
                         getProductDetailsFromFirebase(barcode) { product ->
                             product?.let {
                                 cartViewModel.addProduct(it)
-                                productName = it.name  // Получаем имя товара из Firebase
+                                productName = it.name
                                 productAdded = true
                                 Log.d("ScanScreen", "Added: ${it.name}")
                             } ?: Log.d("ScanScreen", "Product not found: $barcode")
@@ -99,18 +100,16 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
             )
         }
 
-        // Показываем уведомление с именем товара
         if (productAdded && productName != null) {
-            // Задержка в 1 секунду, после которой имя товара исчезает
             LaunchedEffect(productName) {
-                playSound(context)  // Воспроизведение звука при добавлении товара
-                delay(1000)  // Задержка 1 секунда
-                productAdded = false  // Скрытие уведомления
-                productName = null  // Очистка имени товара
+                playSound(context)
+                delay(1000)
+                productAdded = false
+                productName = null
             }
 
             Text(
-                text = "Added: $productName",  // Отображаем имя товара
+                text = "Added: $productName",
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp),
@@ -119,7 +118,6 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
             )
         }
 
-        // Отображение последнего отсканированного баркода
         scannedBarcode?.let {
             Text(
                 text = "Last Scanned Barcode: $it",
@@ -186,7 +184,6 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
         }
     }
 }
-
 
 
 @SuppressLint("UnsafeOptInUsageError")

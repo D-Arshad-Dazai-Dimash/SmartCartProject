@@ -16,10 +16,8 @@ import com.example.myapplication.ui.components.PutBackGroundImage
 import kotlinx.coroutines.delay
 
 
-//@Preview(showBackground = true)
 @Composable
 fun WelcomeScreen(navController: NavController) {
-//fun WelcomeScreen(){
     LaunchedEffect(Unit) {
         delay(2000)
         navController.navigate("signup")

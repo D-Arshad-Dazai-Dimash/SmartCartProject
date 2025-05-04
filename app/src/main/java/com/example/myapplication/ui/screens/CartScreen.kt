@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -19,6 +21,10 @@ import com.example.myapplication.viewModel.CartViewModel
 @Composable
 fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
     val cartProducts = cartViewModel.cartProducts
+
+    LaunchedEffect(Unit) {
+        cartViewModel.loadCartFromFirebase()
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState())) {
@@ -32,14 +38,20 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                         barcode = product.barcode,
                         productName = product.name,
                         price = product.price,
-                        idImage = product.imageResId,
+                        quantity = product.quantity,
                         onRemove = {
                             cartViewModel.removeProduct(product.barcode)
                         }
                     )
                 }
             }
+
+            Button(
+                onClick = { cartViewModel.clearCart() },
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text("Clear Cart")
+            }
         }
     }
 }
-

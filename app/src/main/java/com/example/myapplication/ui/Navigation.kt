@@ -1,6 +1,6 @@
 package com.example.myapplication.ui
 
-import ScanScreen
+import com.example.myapplication.ui.screens.ScanScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,7 +22,7 @@ fun SetupNavGraph(navController: NavHostController) {
 
     val isUserSignedIn = remember { false }
 
-    val startDestination = if (isUserSignedIn) "home" else "welcome"
+    val startDestination = if (isUserSignedIn) "home" else "home"
 
     NavHost(navController = navController, startDestination = "welcome") {
         composable("welcome") {

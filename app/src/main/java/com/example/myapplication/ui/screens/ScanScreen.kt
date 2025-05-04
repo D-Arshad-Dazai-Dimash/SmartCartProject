@@ -1,8 +1,9 @@
+package com.example.myapplication.ui.screens
+
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Rect
-import android.graphics.RectF
+import android.media.MediaPlayer
 import android.util.Log
 import android.view.ViewGroup
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,16 +21,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,69 +41,116 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.myapplication.R
-import com.example.myapplication.ui.components.cartScreen.getProductDetails
 import com.example.myapplication.viewModel.CartViewModel
+import com.google.firebase.database.*
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
+import com.example.myapplication.data.Product
+import com.example.myapplication.viewModel.getProductDetailsFromFirebase
+import kotlinx.coroutines.delay
 
+
+fun playSound(context: Context) {
+    val mediaPlayer = MediaPlayer.create(
+        context,
+        R.raw.beep
+    )
+    mediaPlayer.start()
+}
 @Composable
 fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
     var permissionGranted by remember { mutableStateOf(false) }
     var scannedBarcode by remember { mutableStateOf<String?>(null) }
-    var scanArea = remember { mutableStateOf<RectF>(RectF()) }
+    var productName by remember { mutableStateOf<String?>(null) }  // Хранение имени товара
+    var productAdded by remember { mutableStateOf(false) }  // Флаг для отображения уведомления
 
-    RequestCameraPermission(onPermissionGranted = { permissionGranted = true },
-        onPermissionDenied = { /* Handle permission denial if needed */ },
-        onBarcodeScanned = { barcode ->
-            scannedBarcode = barcode
-            val product = getProductDetails(barcode)
-            cartViewModel.addProduct(product)
-            println("Scanned product: $barcode")
-        })
+    RequestCameraPermission(
+        onPermissionGranted = { permissionGranted = true },
+        onPermissionDenied = { /* Handle permission denial if needed */ }
+    )
+
+    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (permissionGranted) {
             CameraPreview(
-                context = LocalContext.current,
+                context = context,
                 lifecycleOwner = LocalLifecycleOwner.current,
                 onBarcodeScanned = { barcode ->
-                    scannedBarcode = barcode
-                    val product = getProductDetails(barcode)
-                    cartViewModel.addProduct(product)
-                    println("Scanned product: $barcode")
-                },
-                scanArea = scanArea
+                    if (scannedBarcode != barcode) {
+                        scannedBarcode = barcode
+                        getProductDetailsFromFirebase(barcode) { product ->
+                            product?.let {
+                                cartViewModel.addProduct(it)
+                                productName = it.name  // Получаем имя товара из Firebase
+                                productAdded = true
+                                Log.d("ScanScreen", "Added: ${it.name}")
+                            } ?: Log.d("ScanScreen", "Product not found: $barcode")
+                        }
+                    }
+                }
             )
         }
 
-        Image(painter = painterResource(id = R.drawable.arrow_back),
+        // Показываем уведомление с именем товара
+        if (productAdded && productName != null) {
+            // Задержка в 1 секунду, после которой имя товара исчезает
+            LaunchedEffect(productName) {
+                playSound(context)  // Воспроизведение звука при добавлении товара
+                delay(1000)  // Задержка 1 секунда
+                productAdded = false  // Скрытие уведомления
+                productName = null  // Очистка имени товара
+            }
+
+            Text(
+                text = "Added: $productName",  // Отображаем имя товара
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp),
+                color = Color.White,
+                style = TextStyle(fontSize = 18.sp)
+            )
+        }
+
+        // Отображение последнего отсканированного баркода
+        scannedBarcode?.let {
+            Text(
+                text = "Last Scanned Barcode: $it",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp),
+                color = Color.White
+            )
+        }
+
+        Image(
+            painter = painterResource(id = R.drawable.arrow_back),
             contentDescription = "Back arrow",
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(start = 10.dp, top = 10.dp, bottom = 50.dp)
+                .padding(10.dp)
                 .size(45.dp, 44.dp)
                 .clickable {
                     navController.popBackStack("home", inclusive = false)
-                })
+                }
+        )
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.6f)
-                .padding(top = 60.dp)
+                .fillMaxHeight(0.8f)
+                .padding(16.dp)
         ) {
-            Canvas(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.Center)
-            ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
                 val canvasWidth = size.width
                 val canvasHeight = size.height
 
@@ -122,41 +166,22 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
                     style = Stroke(width = 4.dp.toPx()),
                     cornerRadius = CornerRadius(50f, 50f)
                 )
-
-                scanArea.value = RectF(left, top, left + rectWidth, top + rectHeight)
-            }
-            scannedBarcode?.let {
-                Text(
-                    text = "Last Scanned Barcode: $it",
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(16.dp),
-                    color = Color.White
-                )
             }
         }
-
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .align(Alignment.BottomCenter)
+                .padding(16.dp)
         ) {
             Button(
                 onClick = {
                     navController.navigate("cart")
                 },
                 modifier = Modifier
-                    .width(370.dp)
-                    .height(62.dp)
-                    .padding(bottom = 20.dp),
-                colors = ButtonColors(
-                    containerColor = Color(0xFF5A6CF3),
-                    contentColor = Color(0xFFFFFFFF),
-                    disabledContentColor = Color(0xffFFFFFF),
-                    disabledContainerColor = Color(0xff5A6CF3)
-                )
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
             ) {
                 Text(text = "Go to Cart with Scanned Barcodes")
             }
@@ -164,55 +189,52 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
     }
 }
 
+
+
 @SuppressLint("UnsafeOptInUsageError")
 @Composable
 fun CameraPreview(
-    context: Context,
-    lifecycleOwner: LifecycleOwner,
-    onBarcodeScanned: (String) -> Unit,
-    scanArea: MutableState<RectF>
+    context: Context, lifecycleOwner: LifecycleOwner, onBarcodeScanned: (String) -> Unit
 ) {
     val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
 
-    AndroidView(modifier = Modifier.fillMaxSize(), factory = { ctx ->
-        val previewView = PreviewView(ctx).apply {
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-            )
-        }
-
-        val cameraProvider = ProcessCameraProvider.getInstance(ctx).get()
-        val preview = androidx.camera.core.Preview.Builder().build().also {
-            it.setSurfaceProvider(previewView.surfaceProvider)
-        }
-
-        val scanner = BarcodeScanning.getClient()
-
-        val imageAnalyzer = ImageAnalysis.Builder().build().also {
-            it.setAnalyzer(cameraExecutor) { imageProxy ->
-                processImageProxy(scanner, imageProxy, onBarcodeScanned, scanArea)
+    AndroidView(
+        modifier = Modifier.fillMaxSize(), factory = { ctx ->
+            val previewView = PreviewView(ctx).apply {
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+                )
             }
-        }
 
-        try {
-            cameraProvider.unbindAll()
-            cameraProvider.bindToLifecycle(
-                lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalyzer
-            )
-        } catch (e: Exception) {
-            Log.e("CameraPreview", "Camera binding failed", e)
-        }
+            val cameraProvider = ProcessCameraProvider.getInstance(ctx).get()
+            val preview = androidx.camera.core.Preview.Builder().build().also {
+                it.setSurfaceProvider(previewView.surfaceProvider)
+            }
 
-        previewView
-    })
+            val scanner = BarcodeScanning.getClient()
+
+            val imageAnalyzer = ImageAnalysis.Builder().build().also {
+                it.setAnalyzer(cameraExecutor) { imageProxy ->
+                    processImageProxy(scanner, imageProxy, onBarcodeScanned)
+                }
+            }
+
+            try {
+                cameraProvider.unbindAll()
+                cameraProvider.bindToLifecycle(
+                    lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalyzer
+                )
+            } catch (e: Exception) {
+                Log.e("CameraPreview", "Camera binding failed", e)
+            }
+
+            previewView
+        })
 }
 
 @SuppressLint("UnsafeOptInUsageError")
 private fun processImageProxy(
-    scanner: BarcodeScanner,
-    imageProxy: ImageProxy,
-    onBarcodeScanned: (String) -> Unit,
-    scanArea: MutableState<RectF>
+    scanner: BarcodeScanner, imageProxy: ImageProxy, onBarcodeScanned: (String) -> Unit
 ) {
     val mediaImage = imageProxy.image
     if (mediaImage != null) {
@@ -220,14 +242,7 @@ private fun processImageProxy(
         scanner.process(image).addOnSuccessListener { barcodes ->
             for (barcode in barcodes) {
                 barcode.rawValue?.let { value ->
-                    val barcodeRect = barcode.boundingBox // Get the coordinates of the barcode
-                    val scaledRect = barcodeRect?.let {
-                        scaleToScanArea(it, scanArea.value)
-                    }
-
-                    if (scaledRect != null && isBarcodeInScanArea(scaledRect, scanArea.value)) {
-                        onBarcodeScanned(value)
-                    }
+                    onBarcodeScanned(value)
                 }
             }
         }.addOnFailureListener {
@@ -240,34 +255,19 @@ private fun processImageProxy(
     }
 }
 
-fun scaleToScanArea(barcodeRect: Rect, scanArea: RectF): RectF {
-    return RectF(
-        barcodeRect.left * (scanArea.width() / 100),
-        barcodeRect.top * (scanArea.height() / 100),
-        barcodeRect.right * (scanArea.width() / 100),
-        barcodeRect.bottom * (scanArea.height() / 100)
-    )
-}
-
-fun isBarcodeInScanArea(barcodeRect: RectF, scanArea: RectF): Boolean {
-    return barcodeRect.intersect(scanArea)
-}
-
 @Composable
 fun RequestCameraPermission(
     onPermissionGranted: () -> Unit,
     onPermissionDenied: () -> Unit,
-    onBarcodeScanned: (String) -> Unit
 ) {
-    val permissionLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                if (isGranted) {
-                    onPermissionGranted()
-                } else {
-                    onPermissionDenied()
-                }
-            })
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(), onResult = { isGranted ->
+            if (isGranted) {
+                onPermissionGranted()
+            } else {
+                onPermissionDenied()
+            }
+        })
 
     LaunchedEffect(Unit) {
         permissionLauncher.launch(Manifest.permission.CAMERA)

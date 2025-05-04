@@ -36,7 +36,7 @@ fun ProductCard(
     barcode: String,
     productName: String,
     price: Double,
-    idImage: Int,
+    quantity: Int,
     onRemove: () -> Unit
 ) {
     Card(
@@ -64,11 +64,7 @@ fun ProductCard(
                     .size(60.dp)
                     .background(Color.Gray, shape = CircleShape)
             ) {
-                Image(
-                    painter = painterResource(id = idImage),
-                    contentDescription = "Product image",
-                    modifier = Modifier.size(60.dp)
-                )
+
             }
             Spacer(modifier = Modifier.width(16.dp))
 

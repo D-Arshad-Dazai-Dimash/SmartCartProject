@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,8 +21,8 @@ import com.example.myapplication.R
 fun ActionButtons(navController: NavController) {
     Column(
         modifier = Modifier.fillMaxWidth(),
+//            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally,
-
     ) {
         ActionCard(
             label = "Scan a product",
@@ -70,5 +72,33 @@ fun ActionButtons(navController: NavController) {
             navController = navController,
             destination = "home"
         )
+        ActionCard(
+            label = "Products purchased",
+            count = "164 purchases",
+            icon = painterResource(id = R.drawable.image_icon2),
+            cardWidth = 370.dp,
+            cardHeight = 176.82.dp,
+            navController = navController,
+            destination = "home"
+        )
+        ActionCard(
+            label = "Products purchased",
+            count = "164 purchases",
+            icon = painterResource(id = R.drawable.image_icon2),
+            cardWidth = 370.dp,
+            cardHeight = 176.82.dp,
+            navController = navController,
+            destination = "home"
+        )
+        ActionCard(
+            label = "Products purchased",
+            count = "164 purchases",
+            icon = painterResource(id = R.drawable.image_icon2),
+            cardWidth = 370.dp,
+            cardHeight = 176.82.dp,
+            navController = navController,
+            destination = "home"
+        )
+
     }
 }

@@ -1,20 +1,23 @@
 package com.example.myapplication.ui.screens
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.myapplication.R
 import com.example.myapplication.ui.components.cartScreen.ProductCard
 import com.example.myapplication.viewModel.CartViewModel
+import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
@@ -24,31 +27,80 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
         cartViewModel.loadCartFromFirebase()
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Your Cart", style = TextStyle(fontWeight = FontWeight.Medium))
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        // Back button
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .size(40.dp)
+                .background(Color(0xFFF5F5F5), CircleShape)
+        ) {
+            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+        }
 
-            if (cartProducts.isEmpty()) {
-                Text("No items in cart", style = TextStyle(fontWeight = FontWeight.Bold))
-            } else {
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "Shopping Cart 🛒",
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (cartProducts.isEmpty()) {
+            Text("No items in cart", fontSize = 16.sp)
+        } else {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 cartProducts.forEach { product ->
+                    val imageRes = when (product.name) {
+                        "Bread" -> R.drawable.bread
+                        "Pack of eggs" -> R.drawable.eggs
+                        "Milk bottle" -> R.drawable.milk
+                        else -> R.drawable.bon_aqua
+                    }
+
+                    // Just show product details and remove button
                     ProductCard(
-                        barcode = product.barcode,
+                        imageRes = imageRes,
                         productName = product.name,
                         price = product.price,
                         quantity = product.quantity,
-                        onRemove = {
-                            cartViewModel.removeProduct(product.barcode)
-                        }
+                        onIncrease = {}, // remove this logic for now
+                        onDecrease = {}, // remove this logic for now
+                        onRemove = { cartViewModel.removeProduct(product.barcode) }
                     )
                 }
             }
 
-            Button(
-                onClick = { cartViewModel.clearCart() },
-                modifier = Modifier.padding(top = 16.dp)
+            Spacer(modifier = Modifier.height(20.dp))
+
+            val total: Double = cartProducts.sumOf { it.price * it.quantity }
+            val formattedTotal = String.format("%.2f", total)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Clear Cart")
+                Text("Total", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                Text("$formattedTotal TG", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFFFF5722))
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = { navController.navigate("paymentForm/$formattedTotal") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7A00)),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(text = "Go To Payment", fontSize = 16.sp, color = Color.White)
             }
         }
     }

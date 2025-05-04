@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
@@ -48,7 +50,7 @@ fun LoginScreen(navController: NavController) {
     var passwordError by remember { mutableStateOf("") }
     var isPasswordCorrect by remember { mutableStateOf(true) }
 
-    val correctPassword = "002016Zhh+"
+    val correctPassword = "+"
 
     fun validatePassword() {
         if (password != correctPassword) {
@@ -72,10 +74,11 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 30.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             Column(
                 modifier = Modifier
-                    .padding(top = 110.dp)
+                    .padding(top = 90.dp)
                     .fillMaxWidth()
             ) {
                 Text(
@@ -96,7 +99,7 @@ fun LoginScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 150.dp)
+                    .padding(top = 180.dp)
             ) {
                 CustomTextField(
                     value = email,
@@ -174,7 +177,7 @@ fun LoginScreen(navController: NavController) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(115.dp))
+                Spacer(modifier = Modifier.height(27.dp))
 
                 Button(
                     onClick = { },
@@ -198,7 +201,7 @@ fun LoginScreen(navController: NavController) {
                     )
                 }
 
-                Spacer(modifier = Modifier.padding(bottom = 27.dp))
+                Spacer(modifier = Modifier.padding(bottom = 55.dp))
 
                 Text(
                     "Don't have an account? ",

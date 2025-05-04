@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -102,10 +104,11 @@ fun SignUpScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 30.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(top = 75.dp)
+                        .padding(top = 55.dp)
                         .fillMaxWidth()
                 ) {
                     Text(
@@ -150,7 +153,7 @@ fun SignUpScreen(navController: NavController) {
                             modifier = Modifier.padding(8.dp)
                         )
                     }
-                    Spacer(modifier = Modifier.padding(bottom = 38.dp))
+                    Spacer(modifier = Modifier.padding(bottom = 27.dp))
 
                     CustomTextField(
                         value = name,
@@ -159,7 +162,7 @@ fun SignUpScreen(navController: NavController) {
                         placeholder = "Enter full name"
                     )
 
-                    Spacer(modifier = Modifier.padding(top = 18.dp))
+                    Spacer(modifier = Modifier.padding(top = 10.dp))
 
                     CustomTextField(
                         value = email,
@@ -169,7 +172,7 @@ fun SignUpScreen(navController: NavController) {
                         keyboardType = KeyboardType.Email
                     )
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     CustomTextField(
                         value = password,
@@ -184,7 +187,7 @@ fun SignUpScreen(navController: NavController) {
                         error = passwordError
                     )
 
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     CustomTextField(
                         value = confirmPassword,
@@ -200,7 +203,7 @@ fun SignUpScreen(navController: NavController) {
                         error = confirmPasswordError
                     )
 
-                    Spacer(modifier = Modifier.height(33.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     PasswordStrengthIndicator(
                         strength = passwordStrength,

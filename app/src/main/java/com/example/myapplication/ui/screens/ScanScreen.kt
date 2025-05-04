@@ -49,12 +49,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.viewModel.CartViewModel
-import com.google.firebase.database.*
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
-import com.example.myapplication.data.Product
 import com.example.myapplication.viewModel.getProductDetailsFromFirebase
 import kotlinx.coroutines.delay
 

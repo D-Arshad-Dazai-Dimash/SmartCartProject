@@ -75,7 +75,7 @@ fun LoginScreen(navController: NavController) {
         ) {
             Column(
                 modifier = Modifier
-                    .padding(top = 110.dp)
+                    .padding(top = 80.dp)
                     .fillMaxWidth()
             ) {
                 Text(
@@ -174,7 +174,7 @@ fun LoginScreen(navController: NavController) {
                     }
                 }
 
-                Spacer(modifier = Modifier.height(115.dp))
+                Spacer(modifier = Modifier.height(27.dp))
 
                 Button(
                     onClick = { },
@@ -198,7 +198,7 @@ fun LoginScreen(navController: NavController) {
                     )
                 }
 
-                Spacer(modifier = Modifier.padding(bottom = 27.dp))
+                Spacer(modifier = Modifier.padding(bottom = 85.dp))
 
                 Text(
                     "Don't have an account? ",

@@ -20,14 +20,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.R
 
 @Composable
-fun Header(navController: NavController) {
+fun Header(navController: NavController, userName: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,7 +34,7 @@ fun Header(navController: NavController) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column() {
+        Column {
             Text(
                 text = "Good Afternoon👋",
                 style = TextStyle(
@@ -47,7 +46,7 @@ fun Header(navController: NavController) {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "Yeskendir Dimash",
+                text = userName,
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,

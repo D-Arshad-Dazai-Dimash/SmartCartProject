@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -35,11 +34,10 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF0F0F0))  // Soft gray background
+            .background(Color(0xFFF0F0F0))
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Receipt Card
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -53,7 +51,6 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(24.dp)
             ) {
-                // Success Icon
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Success",
@@ -62,7 +59,6 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Success Text
                 Text(
                     text = "Payment Successful!",
                     fontSize = 24.sp,
@@ -73,13 +69,7 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Project and Amount Details
-                Text(
-                    text = "Project: $projectName",
-                    fontSize = 18.sp,
-                    color = Color.Gray,
-                    textAlign = TextAlign.Center
-                )
+
                 Text(
                     text = "Amount Paid: $amount",
                     fontSize = 18.sp,
@@ -89,23 +79,17 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Back Button
                 Button(
-                    onClick = { navController.popBackStack() },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2B802B)),
+                    onClick = {
+                        navController.navigate("bill")
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(56.dp)
-
+                        .padding(top = 8.dp)
                 ) {
-                    Text(
-                        text = "Back to Project",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
+                    Text(text = "Go to Bill Page")
                 }
+
             }
         }
     }

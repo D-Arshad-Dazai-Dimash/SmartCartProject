@@ -7,6 +7,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.myapplication.ui.screens.PaymentFormPage
+import com.example.myapplication.ui.screens.ReceiptPage
 import com.example.myapplication.ui.screens.CartScreen
 import com.example.myapplication.ui.screens.HistoryScreen
 import com.example.myapplication.ui.screens.HomeScreen
@@ -44,6 +46,20 @@ fun SetupNavGraph(navController: NavHostController) {
             CartScreen(
                 navController = navController,
                 cartViewModel = cartViewModel
+            )
+        }
+
+        composable("paymentForm/{formattedTotal}") { backStackEntry ->
+            PaymentFormPage(
+                navController,
+                projectName = backStackEntry.arguments?.getString("formattedTotal") ?: ""
+            )
+        }
+        composable("receipt/{projectName}/{amount}") { backStackEntry ->
+            ReceiptPage(
+                navController,
+                projectName = backStackEntry.arguments?.getString("projectName") ?: "",
+                amount = backStackEntry.arguments?.getString("amount") ?: ""
             )
         }
     }

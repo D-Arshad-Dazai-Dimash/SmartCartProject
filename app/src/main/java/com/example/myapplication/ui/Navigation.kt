@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.myapplication.ui.screens.BillPage
 import com.example.myapplication.ui.screens.PaymentFormPage
 import com.example.myapplication.ui.screens.ReceiptPage
 import com.example.myapplication.ui.screens.CartScreen
@@ -34,6 +35,7 @@ fun SetupNavGraph(navController: NavHostController) {
         composable("welcome") {
             WelcomeScreen(navController)
         }
+        composable("bill"){ BillPage(navController,cartViewModel) }
         composable("login") { LoginScreen(navController) } //
         composable("signup") { SignUpScreen(navController) } //
         composable("home") { HomeScreen(navController) }

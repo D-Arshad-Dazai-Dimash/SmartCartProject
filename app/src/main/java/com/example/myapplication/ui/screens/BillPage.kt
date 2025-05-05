@@ -101,8 +101,6 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
-
-        // Back button
         IconButton(
             onClick = { navController.popBackStack() },
             modifier = Modifier

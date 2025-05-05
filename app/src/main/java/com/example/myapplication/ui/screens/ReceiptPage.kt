@@ -69,12 +69,7 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text(
-                    text = "Project: $projectName",
-                    fontSize = 18.sp,
-                    color = Color.Gray,
-                    textAlign = TextAlign.Center
-                )
+
                 Text(
                     text = "Amount Paid: $amount",
                     fontSize = 18.sp,

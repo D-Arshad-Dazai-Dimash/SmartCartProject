@@ -1,4 +1,4 @@
-package com.example.yourapp.ui.screens
+package com.example.myapplication.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -62,7 +62,7 @@ fun HistoryScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(28.dp))
 
-                    // Title and order completed
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,

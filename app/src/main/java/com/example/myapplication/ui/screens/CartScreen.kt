@@ -80,7 +80,7 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
                                     else -> R.drawable.bon_aqua
                                 }
 
-                                // Just show product details and remove button
+
                                 ProductCard(
                                     imageRes = imageRes,
                                     productName = product.name,

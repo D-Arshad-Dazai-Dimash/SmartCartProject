@@ -35,11 +35,11 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF0F0F0))  // Soft gray background
+            .background(Color(0xFFF0F0F0))
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        // Receipt Card
+
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -53,16 +53,16 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(24.dp)
             ) {
-                // Success Icon
+
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Success",
-                    tint = Color(0xFF4CAF50),  // Green for success
+                    tint = Color(0xFFFF7A00),
                     modifier = Modifier.size(80.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Success Text
+
                 Text(
                     text = "Payment Successful!",
                     fontSize = 24.sp,
@@ -73,7 +73,7 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Project and Amount Details
+
                 Text(
                     text = "Project: $projectName",
                     fontSize = 18.sp,
@@ -89,11 +89,10 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Back Button
                 Button(
                     onClick = { navController.popBackStack() },
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2B802B)),
+                    colors = ButtonDefaults.buttonColors(Color(0xFFFF7A00)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)

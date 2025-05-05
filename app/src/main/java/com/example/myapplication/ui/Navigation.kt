@@ -30,7 +30,7 @@ fun SetupNavGraph(navController: NavHostController) {
 
     val startDestination = if (isUserSignedIn) "home" else "welcome"
 
-    NavHost(navController = navController, startDestination = "profile") {
+    NavHost(navController = navController, startDestination = startDestination) {
         composable("welcome") {
             WelcomeScreen(navController)
         }

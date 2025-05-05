@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.myapplication.ui.screens.BillPage
 import com.example.myapplication.ui.screens.PaymentFormPage
 import com.example.myapplication.ui.screens.ReceiptPage
 import com.example.myapplication.ui.screens.CartScreen
@@ -20,6 +21,7 @@ import com.example.myapplication.ui.screens.SignUpScreen
 import com.example.myapplication.ui.screens.WelcomeScreen
 import com.example.myapplication.viewModel.CartViewModel
 import com.example.myapplication.viewModel.NotificationsViewModel
+import com.example.myapplication.viewModel.ProfileViewModel
 
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
@@ -30,13 +32,14 @@ fun SetupNavGraph(navController: NavHostController) {
 
     val startDestination = if (isUserSignedIn) "home" else "welcome"
 
-    NavHost(navController = navController, startDestination = "profile") {
+    NavHost(navController = navController, startDestination = startDestination) {
         composable("welcome") {
             WelcomeScreen(navController)
         }
+        composable("bill"){ BillPage(navController,cartViewModel) }
         composable("login") { LoginScreen(navController) } //
         composable("signup") { SignUpScreen(navController) } //
-        composable("home") { HomeScreen(navController) }
+        composable("home") { HomeScreen(navController , profileViewModel = ProfileViewModel()) }
         composable("history") { HistoryScreen(navController) }
 
         composable("scan") {

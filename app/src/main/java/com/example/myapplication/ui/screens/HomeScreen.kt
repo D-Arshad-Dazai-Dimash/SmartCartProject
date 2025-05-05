@@ -6,6 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,9 +20,12 @@ import com.example.myapplication.ui.components.HomeScreen.WelcomeMessage
 import com.example.myapplication.viewModel.ProfileViewModel
 
 @Composable
-fun HomeScreen(navController: NavController, profileViewModel: ProfileViewModel = viewModel()) {
+fun HomeScreen(navController: NavController, profileViewModel: ProfileViewModel) {
+    val userName by profileViewModel.userName  
 
-    val userName by profileViewModel.userName
+    LaunchedEffect(Unit) {
+        profileViewModel.userName
+    }
 
     Scaffold(
         containerColor = Color.White,
@@ -30,12 +34,16 @@ fun HomeScreen(navController: NavController, profileViewModel: ProfileViewModel 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 46.dp, start = 19.dp, end = 19.dp)
+                    .padding(
+                        top = 46.dp,
+                        start = 19.dp,
+                        end = 19.dp
+                    )
                     .padding(paddingValues)
                     .background(color = Color.White)
                     .verticalScroll(rememberScrollState())
             ) {
-                Header(navController = navController, userName = userName)
+                Header(navController, userName)  // Pass the userName here
                 Spacer(modifier = Modifier.height(24.dp))
                 WelcomeMessage()
                 Spacer(modifier = Modifier.height(24.dp))

@@ -21,6 +21,7 @@ import com.example.myapplication.ui.screens.SignUpScreen
 import com.example.myapplication.ui.screens.WelcomeScreen
 import com.example.myapplication.viewModel.CartViewModel
 import com.example.myapplication.viewModel.NotificationsViewModel
+import com.example.myapplication.viewModel.ProfileViewModel
 
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
@@ -38,7 +39,7 @@ fun SetupNavGraph(navController: NavHostController) {
         composable("bill"){ BillPage(navController,cartViewModel) }
         composable("login") { LoginScreen(navController) } //
         composable("signup") { SignUpScreen(navController) } //
-        composable("home") { HomeScreen(navController) }
+        composable("home") { HomeScreen(navController , profileViewModel = ProfileViewModel()) }
         composable("history") { HistoryScreen(navController) }
 
         composable("scan") {

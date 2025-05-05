@@ -122,7 +122,7 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
                 .padding(10.dp)
                 .size(45.dp, 44.dp)
                 .clickable {
-                    navController.popBackStack("home", inclusive = false)
+                    navController.popBackStack()
                 }
         )
 

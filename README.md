@@ -1,6 +1,5 @@
 ## 📄 **README.md**
 
-````markdown
 # SmartCart: Mobile Shopping Smart Cart  
 
 ## 📝 Introduction
@@ -52,7 +51,6 @@ Follow these steps to set up and run the project locally:
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/yourusername/smartcart.git](https://github.com/D-Arshad-Dazai-Dimash/SmartCartProject_16-P
-````
 
 2. **Open the project in Android Studio:**
 

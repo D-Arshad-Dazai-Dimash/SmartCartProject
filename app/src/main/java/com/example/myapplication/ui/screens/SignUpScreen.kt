@@ -18,14 +18,10 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,12 +37,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.PutBackGroundImage
+import com.example.myapplication.ui.components.SignUpScreen.CustomTextField
+import com.example.myapplication.ui.components.SignUpScreen.PasswordStrengthIndicator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.FirebaseDatabase
@@ -108,7 +105,6 @@ fun SignUpScreen(navController: NavController) {
                                     Toast.LENGTH_SHORT
                                 ).show()
 
-
                                 val userDatabaseRef =
                                     FirebaseDatabase.getInstance().getReference("users")
                                 val userData = mapOf("name" to name, "email" to email)
@@ -148,8 +144,6 @@ fun SignUpScreen(navController: NavController) {
                 }
         }
     }
-
-
     Box(
         modifier = Modifier
             .background(Color.Gray)
@@ -332,68 +326,6 @@ fun SignUpScreen(navController: NavController) {
                     }
                 }
             }
-        }
-    }
-}
-
-
-@Composable
-fun PasswordStrengthIndicator(strength: Float, strengthText: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth(0.95f)
-    ) {
-        LinearProgressIndicator(
-            progress = strength,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.LightGray),
-            color = when {
-                strength <= 0.33f -> Color.Red
-                strength in 0.34f..0.66f -> Color.Yellow
-                else -> Color.Green
-            },
-        )
-
-        Text(
-            text = strengthText,
-            color = when {
-                strength <= 0.33f -> Color.Red
-                strength in 0.34f..0.66f -> Color.Yellow
-                else -> Color.Green
-            },
-            modifier = Modifier.padding(top = 4.dp)
-        )
-    }
-}
-
-@Composable
-fun CustomTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    placeholder: String,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    visualTransformation: VisualTransformation = VisualTransformation.None,
-    error: String? = null,
-    isError: Boolean = false
-) {
-    Column {
-        OutlinedTextField(
-            value = value,
-            onValueChange = onValueChange,
-            label = { Text(label) },
-            placeholder = { Text(placeholder) },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = keyboardType
-            ),
-            visualTransformation = visualTransformation,
-            isError = isError,
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        if (isError && error != null) {
-            Text(text = error, color = Color.Red, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

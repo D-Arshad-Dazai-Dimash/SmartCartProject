@@ -40,7 +40,7 @@ fun HomeScreen(navController: NavController) {
                     .background(color = Color.White)
                     .verticalScroll(rememberScrollState())
             ) {
-                Header()
+                Header(navController)
                 Spacer(modifier = Modifier.height(24.dp))
                 WelcomeMessage()
                 Spacer(modifier = Modifier.height(24.dp))

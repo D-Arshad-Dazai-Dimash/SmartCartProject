@@ -1,18 +1,8 @@
 package com.example.myapplication.ui.screens
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.media.MediaPlayer
 import android.util.Log
-import android.view.ViewGroup
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -44,17 +34,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.example.myapplication.R
+import com.example.myapplication.ui.components.ScanScreen.CameraPreview
+import com.example.myapplication.ui.components.ScanScreen.RequestCameraPermission
 import com.example.myapplication.viewModel.CartViewModel
 import com.example.myapplication.viewModel.getProductDetailsFromFirebase
-import com.google.mlkit.vision.barcode.BarcodeScanner
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.common.InputImage
 import kotlinx.coroutines.delay
-import java.util.concurrent.Executors
 
 
 fun playSound(context: Context) {
@@ -185,86 +171,3 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
     }
 }
 
-
-@SuppressLint("UnsafeOptInUsageError")
-@Composable
-fun CameraPreview(
-    context: Context, lifecycleOwner: LifecycleOwner, onBarcodeScanned: (String) -> Unit
-) {
-    val cameraExecutor = remember { Executors.newSingleThreadExecutor() }
-
-    AndroidView(
-        modifier = Modifier.fillMaxSize(), factory = { ctx ->
-            val previewView = PreviewView(ctx).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            }
-
-            val cameraProvider = ProcessCameraProvider.getInstance(ctx).get()
-            val preview = androidx.camera.core.Preview.Builder().build().also {
-                it.setSurfaceProvider(previewView.surfaceProvider)
-            }
-
-            val scanner = BarcodeScanning.getClient()
-
-            val imageAnalyzer = ImageAnalysis.Builder().build().also {
-                it.setAnalyzer(cameraExecutor) { imageProxy ->
-                    processImageProxy(scanner, imageProxy, onBarcodeScanned)
-                }
-            }
-
-            try {
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
-                    lifecycleOwner, CameraSelector.DEFAULT_BACK_CAMERA, preview, imageAnalyzer
-                )
-            } catch (e: Exception) {
-                Log.e("CameraPreview", "Camera binding failed", e)
-            }
-
-            previewView
-        })
-}
-
-@SuppressLint("UnsafeOptInUsageError")
-private fun processImageProxy(
-    scanner: BarcodeScanner, imageProxy: ImageProxy, onBarcodeScanned: (String) -> Unit
-) {
-    val mediaImage = imageProxy.image
-    if (mediaImage != null) {
-        val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
-        scanner.process(image).addOnSuccessListener { barcodes ->
-            for (barcode in barcodes) {
-                barcode.rawValue?.let { value ->
-                    onBarcodeScanned(value)
-                }
-            }
-        }.addOnFailureListener {
-            Log.e("BarcodeScanner", "Scanning failed", it)
-        }.addOnCompleteListener {
-            imageProxy.close()
-        }
-    } else {
-        imageProxy.close()
-    }
-}
-
-@Composable
-fun RequestCameraPermission(
-    onPermissionGranted: () -> Unit,
-    onPermissionDenied: () -> Unit,
-) {
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(), onResult = { isGranted ->
-            if (isGranted) {
-                onPermissionGranted()
-            } else {
-                onPermissionDenied()
-            }
-        })
-
-    LaunchedEffect(Unit) {
-        permissionLauncher.launch(Manifest.permission.CAMERA)
-    }
-}

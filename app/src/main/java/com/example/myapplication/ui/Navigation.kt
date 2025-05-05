@@ -1,6 +1,6 @@
 package com.example.myapplication.ui
 
-import com.example.myapplication.ui.screens.ScanScreen
+import ProfileDataScreen
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -13,9 +13,13 @@ import com.example.myapplication.ui.screens.CartScreen
 import com.example.myapplication.ui.screens.HistoryScreen
 import com.example.myapplication.ui.screens.HomeScreen
 import com.example.myapplication.ui.screens.LoginScreen
+import com.example.myapplication.ui.screens.NotificationsScreen
+import com.example.myapplication.ui.screens.ProfileScreen
+import com.example.myapplication.ui.screens.ScanScreen
 import com.example.myapplication.ui.screens.SignUpScreen
 import com.example.myapplication.ui.screens.WelcomeScreen
 import com.example.myapplication.viewModel.CartViewModel
+import com.example.myapplication.viewModel.NotificationsViewModel
 
 @Composable
 fun SetupNavGraph(navController: NavHostController) {
@@ -26,7 +30,7 @@ fun SetupNavGraph(navController: NavHostController) {
 
     val startDestination = if (isUserSignedIn) "home" else "welcome"
 
-    NavHost(navController = navController, startDestination = startDestination) {
+    NavHost(navController = navController, startDestination = "profile") {
         composable("welcome") {
             WelcomeScreen(navController)
         }
@@ -60,6 +64,17 @@ fun SetupNavGraph(navController: NavHostController) {
                 navController,
                 projectName = backStackEntry.arguments?.getString("projectName") ?: "",
                 amount = backStackEntry.arguments?.getString("amount") ?: ""
+            )
+        }
+
+        composable("profile") { ProfileScreen(navController) }
+
+        composable("personalData") { ProfileDataScreen(navController) }
+
+        composable("notifications") {
+            NotificationsScreen(
+                navController,
+                notificationsViewModel = NotificationsViewModel()
             )
         }
     }

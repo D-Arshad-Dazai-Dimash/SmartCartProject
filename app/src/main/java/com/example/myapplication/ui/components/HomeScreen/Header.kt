@@ -1,6 +1,7 @@
 package com.example.myapplication.ui.components.HomeScreen
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,11 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.myapplication.R
 
-@Preview(showBackground = true)
 @Composable
-fun Header() {
+fun Header(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,6 +62,7 @@ fun Header() {
             modifier = Modifier
                 .size(59.dp)
                 .clip(CircleShape)
+                .clickable { navController.navigate("profile") }
         )
     }
 }

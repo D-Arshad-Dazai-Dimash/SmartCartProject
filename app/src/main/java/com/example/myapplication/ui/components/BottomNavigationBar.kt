@@ -52,7 +52,7 @@ fun BottomNavigationBar(navController: NavController) {
                         Icon(
                             painter = painterResource(id = screen.icon),
                             contentDescription = screen.title,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size( 30.dp, 25.dp)
                         )
                     },
                     onClick = {

@@ -132,7 +132,7 @@ fun PaymentFormPage(navController: NavController, projectName: String) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50)),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7A00)),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Text("Pay Now", color = Color.White, fontSize = 18.sp)

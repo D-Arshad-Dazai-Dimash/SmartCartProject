@@ -57,7 +57,7 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
                 Icon(
                     imageVector = Icons.Default.CheckCircle,
                     contentDescription = "Success",
-                    tint = Color(0xFF4CAF50),  // Green for success
+                    tint = Color(0xFFFF7A00),  // Green for success
                     modifier = Modifier.size(80.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -67,7 +67,7 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
                     text = "Payment Successful!",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF333333),
+                    color = Color(0xFFFF7A00),
                     textAlign = TextAlign.Center
                 )
 
@@ -75,7 +75,7 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
 
                 // Project and Amount Details
                 Text(
-                    text = "Project: $projectName",
+                    text = "Total cost: $projectName",
                     fontSize = 18.sp,
                     color = Color.Gray,
                     textAlign = TextAlign.Center
@@ -93,7 +93,7 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
                 Button(
                     onClick = { navController.popBackStack() },
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2B802B)),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7A00)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)

@@ -60,7 +60,7 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
 
     RequestCameraPermission(
         onPermissionGranted = { permissionGranted = true },
-        onPermissionDenied = { /* Handle permission denial if needed */ }
+        onPermissionDenied = { }
     )
 
     val context = LocalContext.current
@@ -81,6 +81,7 @@ fun ScanScreen(navController: NavController, cartViewModel: CartViewModel) {
                                 Log.d("ScanScreen", "Added: ${it.name}")
                             } ?: Log.d("ScanScreen", "Product not found: $barcode")
                         }
+
                     }
                 }
             )

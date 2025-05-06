@@ -335,4 +335,3 @@ fun LoginScreen(navController: NavController) {
         }
     }
 }
-//Assylzhan

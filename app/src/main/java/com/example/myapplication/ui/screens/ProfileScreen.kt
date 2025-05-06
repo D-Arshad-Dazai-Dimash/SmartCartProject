@@ -39,6 +39,7 @@ import com.example.myapplication.R
 import com.example.myapplication.ui.components.BottomNavigationBar
 import com.example.myapplication.ui.components.profileScreen.ProfileButton
 import com.example.myapplication.viewModel.ProfileViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun ProfileScreen(navController: NavController) {
@@ -64,7 +65,7 @@ fun ProfileScreen(navController: NavController) {
                         .padding(10.dp)
                         .size(45.dp, 44.dp)
                         .clickable {
-                            navController.popBackStack("home", inclusive = false)
+                            navController.popBackStack()
                         }
                 )
                 Column(
@@ -183,7 +184,13 @@ fun ProfileScreen(navController: NavController) {
                     ProfileButton(
                         id = R.drawable.exit_icon,
                         text = "Log out",
-                        onClick = { navController.navigate("login") }
+                        onClick = {
+                            FirebaseAuth.getInstance().signOut()
+                            navController.navigate("login") {
+                                popUpTo("home") { inclusive = true }
+                            }
+                        }
+
                     )
 
                     Spacer(modifier = Modifier.weight(1f))

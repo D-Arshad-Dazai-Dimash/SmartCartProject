@@ -167,14 +167,14 @@ fun SwipeablePager(pagerItems: List<String>, backgroundImages: List<Painter>) {
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-            Text(
-                text = pagerItems[page],
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            )
+//            Text(
+//                text = pagerItems[page],
+//                style = TextStyle(
+//                    fontSize = 16.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color.White
+//                )
+//            )
         }
     }
 }

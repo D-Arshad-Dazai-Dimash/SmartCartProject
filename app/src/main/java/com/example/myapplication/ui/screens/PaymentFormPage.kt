@@ -1,5 +1,7 @@
 package com.example.myapplication.ui.screens
 
+import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,14 +38,65 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-
-
+import com.example.myapplication.viewModel.CartViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 @Composable
-fun PaymentFormPage(navController: NavController, projectName: String) {
-    var amount by remember { mutableStateOf("") }
+fun PaymentFormPage(
+    navController: NavController,
+    amount: String,
+    cartViewModel: CartViewModel
+) {
     var cardNumber by remember { mutableStateOf("") }
-    var expiryDate by remember { mutableStateOf("") }
+    var expiryDate by remember { mutableStateOf(" /") }
     var cvc by remember { mutableStateOf("") }
+    var isButtonEnabled by remember { mutableStateOf(false) }
+
+    val cartProducts = cartViewModel.cartProducts
+    val formattedTotal = amount
+
+    fun isValidExpiryDate(date: String): Boolean {
+        return date.length == 5 && date[2] == '/' && date.substring(0, 2).all { it.isDigit() } && date.substring(3).all { it.isDigit() }
+    }
+
+    fun isValidCardNumber(number: String): Boolean {
+        return number.length == 16 && number.all { it.isDigit() }
+    }
+
+    fun isValidCVC(cvcInput: String): Boolean {
+        return cvcInput.length == 3 && cvcInput.all { it.isDigit() }
+    }
+
+    fun checkFormValidity() {
+        isButtonEnabled = isValidCardNumber(cardNumber) && isValidExpiryDate(expiryDate) && isValidCVC(cvc)
+    }
+
+    fun handleExpiryDateInput(input: String) {
+        if (input.length <= 5) {
+            val formattedInput = when {
+                input.length == 2 && !input.contains("/") -> "$input/"
+                input.length == 3 && input[2] != '/' -> "${input.substring(0, 2)}/" // Добавить слэш
+                input.length <= 5 -> input // Даем возможность вводить только 2 цифры до слэша и 2 после
+                else -> expiryDate
+            }
+            expiryDate = formattedInput
+            checkFormValidity()
+        }
+    }
+
+    fun handleExpiryDateChange(value: String) {
+        if (value.length <= 5) {
+            val formattedValue = when {
+                value.length == 2 && !value.contains("/") -> "$value/"
+                value.length == 3 && value[2] != '/' -> value.substring(0, 2) + "/" + value.substring(2) // Добавить слэш автоматически
+                value.length <= 5 -> value
+                else -> expiryDate
+            }
+            expiryDate = formattedValue
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -68,7 +121,7 @@ fun PaymentFormPage(navController: NavController, projectName: String) {
                 )
             }
             Text(
-                text = "Payment for $projectName",
+                text = "Payment",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(0xFF333333)
@@ -89,56 +142,100 @@ fun PaymentFormPage(navController: NavController, projectName: String) {
             ) {
                 OutlinedTextField(
                     value = amount,
-                    onValueChange = { amount = it },
+                    onValueChange = {},
                     label = { Text("Amount") },
-                    leadingIcon = { Icon(Icons.Default.Settings, contentDescription = "Amount") },  // Updated icon
+                    leadingIcon = { Icon(Icons.Default.Settings, contentDescription = "Amount") },
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
+                    readOnly = true
                 )
 
                 OutlinedTextField(
                     value = cardNumber,
-                    onValueChange = { cardNumber = it },
+                    onValueChange = {
+                        if (it.length <= 16) {
+                            cardNumber = it
+                            checkFormValidity()
+                        }
+                    },
                     label = { Text("Card Number") },
-                    leadingIcon = { Icon(Icons.Default.Add, contentDescription = "Card") },  // Updated icon
+                    leadingIcon = { Icon(Icons.Default.Add, contentDescription = "Card") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                    maxLines = 1
+                )
+
+                OutlinedTextField(
+                    value = expiryDate,
+                    onValueChange = { handleExpiryDateChange(it) },
+                    label = { Text("Expiry Date (MM/YY)") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    OutlinedTextField(
-                        value = expiryDate,
-                        onValueChange = { expiryDate = it },
-                        label = { Text("Expiry Date") },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-
-                    OutlinedTextField(
-                        value = cvc,
-                        onValueChange = { cvc = it },
-                        label = { Text("CVC") },
-                        modifier = Modifier.weight(1f),
-                        shape = RoundedCornerShape(8.dp),
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword)
-                    )
-                }
+                OutlinedTextField(
+                    value = cvc,
+                    onValueChange = {
+                        if (it.length <= 3) {
+                            cvc = it
+                            checkFormValidity()
+                        }
+                    },
+                    label = { Text("CVC") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.NumberPassword)
+                )
 
                 Button(
-                    onClick = { navController.navigate("receipt/$projectName/$amount") },
+                    onClick = {
+                        val totalAmount = convertToDouble(formattedTotal)
+
+                        val timeZone = TimeZone.getTimeZone("GMT+5")
+                        val sdf = SimpleDateFormat("dd.MM.yyyy (EEEE, HH:mm)", Locale.getDefault())
+                        sdf.timeZone = timeZone
+                        val currentTime = sdf.format(Date())
+
+                        val orderId = "ORDER_${System.currentTimeMillis()}"
+
+                        // Логирование
+                        Log.d("PaymentForm", "Current time: $currentTime")
+                        Log.d("PaymentForm", "Formatted total: $formattedTotal")
+                        Log.d("PaymentForm", "Generated Order ID: $orderId")
+
+                        // Проверка данных перед сохранением
+                        if (formattedTotal.isEmpty() || cardNumber.isEmpty() || expiryDate.isEmpty() || cvc.isEmpty()) {
+                            Log.e("PaymentForm", "Fields are empty!")
+                        } else {
+                            cartViewModel.saveOrder(totalAmount, cartProducts, currentTime)
+
+                            Log.d("PaymentForm", "Order saved successfully.")
+
+                            navController.navigate("receipt/$formattedTotal/$orderId")
+                        }
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7A00)),
-                    shape = RoundedCornerShape(8.dp)
+                    shape = RoundedCornerShape(8.dp),
+                    enabled = isButtonEnabled
                 ) {
                     Text("Pay Now", color = Color.White, fontSize = 18.sp)
                 }
+
             }
         }
     }
 }
-
+fun convertToDouble(amount: String): Double {
+    val formattedAmount = amount.replace(",", ".")
+    return try {
+        formattedAmount.toDouble()
+    } catch (e: NumberFormatException) {
+        Log.e("PaymentForm", "Invalid number format: $formattedAmount")
+        0.0
+    }
+}

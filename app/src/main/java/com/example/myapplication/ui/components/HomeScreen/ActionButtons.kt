@@ -29,9 +29,9 @@ fun ActionButtons(navController: NavController) {
                 "Page 3: Next Step"
             ),
             backgroundImages = listOf(
-                painterResource(id = R.drawable.ic_launcher_background),
-                painterResource(id = R.drawable.image_icon3),
-                painterResource(id = R.drawable.image_icon)
+                painterResource(id = R.drawable.dis),
+                painterResource(id = R.drawable.magnum_icecream),
+                painterResource(id = R.drawable.magnun)
             ),
             cardWidth = 370.dp,
             cardHeight = 150.dp,

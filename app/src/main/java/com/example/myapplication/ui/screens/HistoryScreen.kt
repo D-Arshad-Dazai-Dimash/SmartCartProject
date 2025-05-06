@@ -29,10 +29,16 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.myapplication.R
 import com.example.myapplication.ui.components.BottomNavigationBar
-
+import com.example.myapplication.viewModel.CartViewModel
+import com.example.myapplication.viewModel.Order
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun HistoryScreen(navController: NavController) {
+fun HistoryScreen(navController: NavController, cartViewModel: CartViewModel) {
+    cartViewModel.loadOrderHistory()
+
+    val orderHistory = cartViewModel.orderHistory
+
     Scaffold(
         containerColor = Color.White,
         bottomBar = { BottomNavigationBar(navController = navController) },
@@ -53,15 +59,14 @@ fun HistoryScreen(navController: NavController) {
                             navController.popBackStack("home", inclusive = false)
                         }
                 )
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp)
                         .padding(paddingValues)
                 ) {
-
                     Spacer(modifier = Modifier.height(28.dp))
-
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -74,24 +79,33 @@ fun HistoryScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    val orders = listOf(1, 2, 3) // Example list of orders
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        items(orders) {
-                            OrderCard()
+                    if (orderHistory.isEmpty()) {
+                        Text("No orders found", fontSize = 16.sp)
+                    } else {
+                        LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                            items(orderHistory) { order ->
+                                OrderCard(order, navController)
+                            }
                         }
                     }
                 }
-            } })
+            }
+        }
+    )
 }
-
 @Composable
-fun OrderCard() {
+fun OrderCard(order: Order, navController: NavController) {
     Card(
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp),
-        modifier = Modifier.fillMaxWidth()
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable {
+                navController.navigate("orderDetails/${order.orderId}")
+            }
     ) {
-        Column(modifier = Modifier.padding(12.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -100,30 +114,129 @@ fun OrderCard() {
                 Box(
                     modifier = Modifier
                         .background(Color(0xFF00C853), RoundedCornerShape(6.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp).width(70.dp)
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
                 ) {
-                    Text(text = "Paid", color = Color.White, fontSize = 12.sp)
+                    Text(text = "Paid", color = Color.White, fontSize = 14.sp)
                 }
 
-                Text(text = "2146 ₸", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = "${order.totalAmount} ₸",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(text = "4 May (17:35)", fontSize = 12.sp, color = Color.Gray)
-            Text(text = "Almaty, Kazakhstan", fontSize = 12.sp, color = Color.Gray)
+            Text(
+                text = "Order Date: ${order.date}",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Row {
-                Image(painterResource(id = R.drawable.bread), contentDescription = "Product", modifier = Modifier.size(32.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-                Image(painterResource(id = R.drawable.fusetea), contentDescription = "Product", modifier = Modifier.size(32.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-                Image(painterResource(id = R.drawable.eggs), contentDescription = "Product", modifier = Modifier.size(32.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-                Image(painterResource(id = R.drawable.bon_aqua), contentDescription = "Product", modifier = Modifier.size(32.dp))
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                order.products.take(4).forEach { product ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.bon_aqua), // Используем изображение товара
+                            contentDescription = product.name,
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Text(text = product.name, fontSize = 14.sp)
+                    }
+                }
             }
         }
     }
 }
+@Composable
+fun OrderDetailsScreen(orderId: String, cartViewModel: CartViewModel, navController: NavController) {
+    val order = cartViewModel.orderHistory.firstOrNull { it.orderId == orderId }
+
+    if (order != null) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = "Order ID: ${order.orderId}",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Order Date: ${order.date}",  // Используется дата, полученная при создании заказа
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            order.products.forEach { product ->
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.bon_aqua), // Используем изображение товара
+                            contentDescription = product.name,
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Text(
+                            text = "${product.name}",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
+                        )
+                    }
+
+                    Text(
+                        text = "${product.price} ₸ x ${product.quantity}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal
+                    )
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Total Amount: ${order.totalAmount} ₸",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = { navController.popBackStack() },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF7A00)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Back to Order History",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
+        }
+    }
+}
+
+
+
+

@@ -57,8 +57,7 @@ dependencies {
 
     implementation ("com.google.firebase:firebase-auth:23.2.0")
     implementation ("com.google.android.gms:play-services-auth:21.3.0")
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

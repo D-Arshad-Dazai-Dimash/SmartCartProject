@@ -28,10 +28,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-
-
+import com.example.myapplication.viewModel.CartViewModel
 @Composable
-fun ReceiptPage(navController: NavController, projectName: String, amount: String) {
+fun ReceiptPage(navController: NavController, amount: String, orderId: String) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -39,7 +38,6 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-
         Card(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -62,7 +60,6 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
                 )
                 Spacer(modifier = Modifier.height(16.dp))
 
-
                 Text(
                     text = "Payment Successful!",
                     fontSize = 24.sp,
@@ -73,13 +70,6 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-
-                Text(
-                    text = "Project: $projectName",
-                    fontSize = 18.sp,
-                    color = Color.Gray,
-                    textAlign = TextAlign.Center
-                )
                 Text(
                     text = "Amount Paid: $amount",
                     fontSize = 18.sp,
@@ -87,16 +77,26 @@ fun ReceiptPage(navController: NavController, projectName: String, amount: Strin
                     textAlign = TextAlign.Center
                 )
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "Order ID: $orderId",
+                    fontSize = 16.sp,
+                    color = Color.Gray,
+                    textAlign = TextAlign.Center
+                )
+
                 Spacer(modifier = Modifier.height(24.dp))
 
                 Button(
-                    onClick = { navController.popBackStack() },
+                    onClick = {
+                        navController.navigate("billPage")
+                    },
                     shape = RoundedCornerShape(12.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xFFFF7A00)),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp)
-
                 ) {
                     Text(
                         text = "Back to Project",

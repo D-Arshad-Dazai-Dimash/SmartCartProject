@@ -30,22 +30,16 @@ import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
-    // Получаем товары из корзины
     val cartProducts = cartViewModel.cartProducts
 
-    // Вычисляем общую сумму
     val total: Double = cartProducts.sumOf { it.price * it.quantity }
     val formattedTotal = String.format("%.2f", total)
 
-    // Используем LaunchedEffect для очистки корзины при выходе из BillPage
     LaunchedEffect(navController) {
-        // Слушаем событие когда страница уничтожается
         navController.currentBackStackEntry?.let { backStackEntry ->
-            // Когда возвращаемся на предыдущую страницу, очищаем корзину
             backStackEntry.lifecycle.addObserver(
                 androidx.lifecycle.LifecycleEventObserver { _, event ->
                     if (event == androidx.lifecycle.Lifecycle.Event.ON_DESTROY) {
-                        // Очистить корзину при уничтожении страницы
                         cartViewModel.clearCart()
                     }
                 }
@@ -61,10 +55,8 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            // Контент страницы (информация о магазине, товарах и т. д.)
-            Spacer(modifier = Modifier.height(16.dp)) // Некоторое пространство сверху
+            Spacer(modifier = Modifier.height(16.dp))
 
-            // Информация о магазине
             Text(
                 text = "MAGNUM SHOPPING CENTER",
                 fontSize = 20.sp,
@@ -75,7 +67,6 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Название квитанции
             Text(
                 text = "RECEIPT / TAX INVOICE",
                 fontSize = 18.sp,
@@ -84,7 +75,6 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Список товаров, купленных в корзине
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 cartProducts.forEach { product ->
                     Text(
@@ -96,7 +86,6 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Раздел для общей суммы
             Divider()
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -108,7 +97,6 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Информация о магазине внизу
             Text(
                 text = "MAGNUM SHOPPING CENTER",
                 fontSize = 14.sp,

@@ -99,7 +99,7 @@ fun ReceiptPage(navController: NavController, amount: String, orderId: String) {
                         .height(56.dp)
                 ) {
                     Text(
-                        text = "Back to Project",
+                        text = "See The Receipt",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White

@@ -52,8 +52,19 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
             .fillMaxSize()
             .padding(16.dp)
     ) {
+
+
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier
+                .background(Color(0xFFF5F5F5), CircleShape)
+                .align(Alignment.TopStart)
+        ) {
+            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+        }
+
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize().padding(30.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -107,14 +118,6 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
                 fontSize = 14.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-        }
-        IconButton(
-            onClick = { navController.popBackStack() },
-            modifier = Modifier
-                .background(Color(0xFFF5F5F5), CircleShape)
-                .align(Alignment.TopStart)
-        ) {
-            Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
         }
     }
 }

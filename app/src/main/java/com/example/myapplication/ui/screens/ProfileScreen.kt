@@ -192,7 +192,6 @@ fun ProfileScreen(navController: NavController) {
                         }
 
                     )
-
                     Spacer(modifier = Modifier.weight(1f))
                 }
             }

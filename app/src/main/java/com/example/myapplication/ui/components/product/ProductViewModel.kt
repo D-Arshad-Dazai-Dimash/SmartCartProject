@@ -9,7 +9,6 @@ class ProductViewModel : ViewModel() {
     private val dbRef = FirebaseDatabase.getInstance().getReference("products")
 
     fun addProduct(product: Product) {
-        // Используем barcode как ключ
         dbRef.child(product.barcode).setValue(product)
     }
 

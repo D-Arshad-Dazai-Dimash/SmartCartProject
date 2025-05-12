@@ -62,7 +62,7 @@ fun LoginScreen(navController: NavController) {
     val auth = FirebaseAuth.getInstance()
 
     val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-        .requestIdToken("YOUR_SERVER_CLIENT_ID.apps.googleusercontent.com")  // Добавьте свой Client ID
+        .requestIdToken("YOUR_SERVER_CLIENT_ID.apps.googleusercontent.com")
         .requestEmail()
         .build()
 

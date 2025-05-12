@@ -43,7 +43,7 @@ fun HomeScreen(navController: NavController, profileViewModel: ProfileViewModel)
                     .background(color = Color.White)
                     .verticalScroll(rememberScrollState())
             ) {
-                Header(navController, userName)  // Pass the userName here
+                Header(navController, userName)
                 Spacer(modifier = Modifier.height(24.dp))
                 WelcomeMessage()
                 Spacer(modifier = Modifier.height(24.dp))

@@ -56,8 +56,12 @@ fun CartScreen(navController: NavController, cartViewModel: CartViewModel) {
         } else {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 cartProducts.forEach { product ->
-                    val imageRes = R.drawable.maccoffee
-
+                    val imageRes = when (product.barcode) {
+                        "1234567890" -> R.drawable.maccoffee
+                        "4870202521186" -> R.drawable.import_files_aksi
+                        "5449000189325" -> R.drawable.ftpeach
+                        else -> R.drawable.bon_aqua
+                    }
 
                     ProductCard(
                         imageRes = imageRes,

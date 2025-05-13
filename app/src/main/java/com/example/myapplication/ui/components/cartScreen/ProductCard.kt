@@ -46,7 +46,6 @@ fun ProductCard(
             .padding(12.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // Слева отображаем изображение
             Image(
                 painter = painterResource(id = imageRes),
                 contentDescription = null,
@@ -55,7 +54,6 @@ fun ProductCard(
                     .padding(end = 12.dp)
             )
 
-            // Информация о товаре справа от изображения
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -66,7 +64,6 @@ fun ProductCard(
 
             Spacer(modifier = Modifier.width(12.dp))
 
-            // Кнопки для увеличения/уменьшения количества
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -79,7 +76,6 @@ fun ProductCard(
                 }
             }
 
-            // Кнопка удаления товара
             IconButton(onClick = onRemove) {
                 Icon(Icons.Default.Delete, contentDescription = "Remove")
             }

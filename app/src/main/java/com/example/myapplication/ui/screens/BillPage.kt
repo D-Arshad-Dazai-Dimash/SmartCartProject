@@ -16,8 +16,10 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,8 +27,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.myapplication.ui.components.BottomNavigationBar
 import com.example.myapplication.viewModel.CartViewModel
-import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
@@ -50,7 +52,6 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
     ) {
 
 
@@ -63,61 +64,92 @@ fun BillPage(navController: NavController, cartViewModel: CartViewModel) {
             Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
         }
 
-        Column(
-            modifier = Modifier.fillMaxSize().padding(30.dp)
-        ) {
-            Spacer(modifier = Modifier.height(16.dp))
+        Scaffold(
+            containerColor = Color.White,
+            bottomBar = { BottomNavigationBar(navController = navController) },
+            content = { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = 46.dp,
+                            start = 19.dp,
+                            end = 19.dp
+                        )
+                        .padding(paddingValues)
+                ) {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "MAGNUM SHOPPING CENTER",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(text = "TAX#01234567891234 (VAT Included)", fontSize = 14.sp)
-            Text(text = "Tel 0123456789", fontSize = 14.sp)
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "RECEIPT / TAX INVOICE",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                cartProducts.forEach { product ->
                     Text(
-                        text = "${product.quantity} ${product.name} - ${product.price * product.quantity} TG",
-                        fontSize = 16.sp
+                        text = "MAGNUM SHOPPING CENTER",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = "TAX#01234567891234 (VAT Included)", fontSize = 14.sp,
+                        color = Color.Black
+                    )
+                    Text(
+                        text = "Tel 0123456789", fontSize = 14.sp,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "RECEIPT / TAX INVOICE",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        cartProducts.forEach { product ->
+                            Text(
+                                text = "${product.quantity} ${product.name} - ${product.price * product.quantity} TG",
+                                fontSize = 16.sp,
+                                color = Color.Black
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Divider()
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            "Total", fontSize = 18.sp, fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                        Text(
+                            "$formattedTotal TG",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "MAGNUM SHOPPING CENTER",
+                        fontSize = 14.sp,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        color = Color.Black
+                    )
+                    Text(
+                        text = "16/9/2566  9:41 p.m.",
+                        fontSize = 14.sp,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        color = Color.Black
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Divider()
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("Total", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text("$formattedTotal TG", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(
-                text = "MAGNUM SHOPPING CENTER",
-                fontSize = 14.sp,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-            Text(
-                text = "16/9/2566  9:41 p.m.",
-                fontSize = 14.sp,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
-        }
+            })
     }
 }
